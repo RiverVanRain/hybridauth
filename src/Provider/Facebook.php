@@ -48,7 +48,7 @@ class Facebook extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'email, public_profile';
+    public $scope = 'email, public_profile';
 
     /**
      * {@inheritdoc}

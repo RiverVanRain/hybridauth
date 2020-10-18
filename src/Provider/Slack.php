@@ -20,7 +20,7 @@ class Slack extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'identity.basic identity.email identity.avatar';
+    public $scope = 'identity.basic identity.email identity.avatar';
 
     /**
      * {@inheritdoc}

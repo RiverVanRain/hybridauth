@@ -58,7 +58,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      *
      * @var string
      */
-    protected $scope = '';
+    public $scope = '';
 
     /**
      * Base URL to provider API

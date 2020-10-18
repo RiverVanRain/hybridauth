@@ -20,7 +20,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'r_liteprofile r_emailaddress w_member_social';
+    public $scope = 'r_liteprofile r_emailaddress w_member_social';
 
     /**
      * {@inheritdoc}

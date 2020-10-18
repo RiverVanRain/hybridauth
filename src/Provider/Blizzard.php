@@ -20,7 +20,7 @@ class Blizzard extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = '';
+    public $scope = '';
 
     /**
      * {@inheritdoc}

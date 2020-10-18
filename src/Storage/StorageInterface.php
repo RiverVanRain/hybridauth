@@ -47,4 +47,8 @@ interface StorageInterface
      * Clear all items in storage
      */
     public function clear();
+	
+    public function getSessionData();
+
+    public function restoreSessionData($sessiondata = null);
 }

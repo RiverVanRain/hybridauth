@@ -20,7 +20,7 @@ class Strava extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'profile:read_all';
+    public $scope = 'profile:read_all';
 
     /**
      * {@inheritdoc}

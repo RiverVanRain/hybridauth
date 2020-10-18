@@ -46,7 +46,7 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'openid user.read contacts.read';
+    public $scope = 'openid user.read contacts.read';
 
     /**
      * {@inheritdoc}

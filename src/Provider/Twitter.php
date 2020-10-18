@@ -192,22 +192,35 @@ class Twitter extends OAuth1
      */
     public function setUserStatus($status)
     {
-        if (is_string($status)) {
-            $status = ['status' => $status];
-        }
-
         // Prepare request parameters.
         $params = [];
-        if (isset($status['status'])) {
-            $params['status'] = $status['status'];
+        if (isset($status['message'])) {
+            $params['status'] = $status['message'];
         }
-        if (isset($status['picture'])) {
+        
+		if (isset($status['picture'])) {
             $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'media' => base64_encode(file_get_contents($status['picture'])),
             ]);
             $params['media_ids'] = $media->media_id;
         }
-
+/* WIP	
+https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-init
+https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-append
+*/
+/*	
+		if (isset($status['video'])) {
+            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+                'command' => 'INIT',
+				'total_bytes' => $status['video_size'],
+				'expires_after_secs' => 86400,
+				'media_type' => 'video/mp4',
+				'media_category' => 'tweet_video',
+				'media' => base64_encode(file_get_contents($status['video'])),
+            ]);
+            $params['media_ids'] = $media->media_id;
+        }
+*/
         $response = $this->apiRequest('statuses/update.json', 'POST', $params);
 
         return $response;

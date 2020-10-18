@@ -20,7 +20,7 @@ class Spotify extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'user-read-email';
+    public $scope = 'user-read-email';
 
     /**
      * {@inheritdoc}

@@ -20,7 +20,7 @@ class Instagram extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'user_profile,user_media';
+    public $scope = 'user_profile,user_media';
 
     /**
      * {@inheritdoc}

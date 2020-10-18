@@ -15,7 +15,7 @@ class QQ extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'get_user_info';
+    public $scope = 'get_user_info';
 
     /**
      * {@inheritdoc}

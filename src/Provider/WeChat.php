@@ -20,7 +20,7 @@ class WeChat extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'snsapi_login,snsapi_userinfo,scope.userInfo';
+    public $scope = 'snsapi_userinfo';
 
     /**
      * {@inheritdoc}

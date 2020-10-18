@@ -63,7 +63,7 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'name email';
+    public $scope = 'name email';
 
     /**
      * {@inheritdoc}
@@ -139,6 +139,14 @@ class Apple extends OAuth2
         }
 
         return $tokens;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConnected()
+    {
+        return (bool)$this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
     }
 
     /**

@@ -20,7 +20,7 @@ class Discord extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'identify email';
+    public $scope = 'identify email';
 
     /**
      * {@inheritdoc}

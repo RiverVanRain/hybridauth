@@ -20,7 +20,7 @@ class DeviantArt extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'user';
+    public $scope = 'user';
 
     /**
      * {@inheritdoc}

@@ -20,7 +20,7 @@ class Amazon extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'profile';
+    public $scope = 'profile';
 
     /**
      * {@inheritdoc}

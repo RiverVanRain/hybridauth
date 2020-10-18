@@ -20,7 +20,7 @@ class Paypal extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'openid profile email address';
+    public $scope = 'openid profile email address';
 
     /**
      * {@inheritdoc}

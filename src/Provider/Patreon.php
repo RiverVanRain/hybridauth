@@ -20,7 +20,7 @@ class Patreon extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'identity identity[email]';
+    public $scope = 'identity identity[email]';
 
     /**
      * {@inheritdoc}

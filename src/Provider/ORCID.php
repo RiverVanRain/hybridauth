@@ -20,8 +20,8 @@ class ORCID extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = '/authenticate';
-
+    public $scope = '/authenticate';
+    
     /**
      * {@inheritdoc}
      */

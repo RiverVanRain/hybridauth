@@ -126,7 +126,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    abstract public function isConnected();
+    // abstract public function isConnected();
 
     /**
      * {@inheritdoc}
@@ -182,6 +182,16 @@ abstract class AbstractAdapter implements AdapterInterface
     public function setPageStatus($status, $pageId)
     {
         throw new NotImplementedException('Provider does not support this feature.');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Checking access_token only works for oauth1 and oauth2, openid will overwrite this method.
+     */
+    public function isConnected()
+    {
+        return (bool) $this->getStoredData('access_token');
     }
 
     /**
