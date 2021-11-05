@@ -20,7 +20,7 @@ class Pinterest extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'read_public';
+    protected $scope = 'read_public';
 
     /**
      * {@inheritdoc}

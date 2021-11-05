@@ -20,7 +20,7 @@ class Reddit extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'identity';
+    protected $scope = 'identity';
 
     /**
      * {@inheritdoc}

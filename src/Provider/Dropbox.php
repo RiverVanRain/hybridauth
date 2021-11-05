@@ -20,7 +20,7 @@ class Dropbox extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'account_info.read';
+    protected $scope = 'account_info.read';
 
     /**
      * {@inheritdoc}

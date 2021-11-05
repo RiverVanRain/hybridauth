@@ -63,7 +63,8 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'email,offline';
+    protected $scope = 'email,offline';
+
     /**
      * {@inheritdoc}
      */

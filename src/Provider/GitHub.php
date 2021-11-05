@@ -20,7 +20,7 @@ class GitHub extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'user:email';
+    protected $scope = 'user:email';
 
     /**
      * {@inheritdoc}

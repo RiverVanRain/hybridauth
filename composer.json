@@ -1,5 +1,5 @@
 {
-    "name": "hybridauth/hybridauth",
+    "name": "rivervanrain/hybridauth",
     "description": "PHP Social Authentication Library",
     "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter", "apple"],
     "homepage": "https://hybridauth.github.io",
@@ -16,13 +16,15 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": ">=5.4.0",
-        "firebase/php-jwt": "*",
-        "phpseclib/phpseclib": "~2.0"
+        "php": "^5.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "^4.8.35 || ^6.5 || ^8"
+        "phpunit/phpunit": "^4.8.35 || ^6.5 || ^8.0"
+    },
+    "suggest": {
+        "firebase/php-jwt": "Needed to support Apple provider",
+        "phpseclib/phpseclib": "Needed to support Apple provider"
     },
     "autoload": {
         "psr-4": {

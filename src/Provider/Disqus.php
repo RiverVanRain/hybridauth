@@ -20,7 +20,7 @@ class Disqus extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'read,email';
+    protected $scope = 'read,email';
 
     /**
      * {@inheritdoc}

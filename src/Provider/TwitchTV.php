@@ -20,7 +20,7 @@ class TwitchTV extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'user:read:email';
+    protected $scope = 'user:read:email';
 
     /**
      * {@inheritdoc}

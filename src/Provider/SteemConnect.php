@@ -20,7 +20,7 @@ class SteemConnect extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'login,vote';
+    protected $scope = 'login,vote';
 
     /**
      * {@inheritdoc}

@@ -46,7 +46,7 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'openid user.read contacts.read';
+    protected $scope = 'openid user.read contacts.read';
 
     /**
      * {@inheritdoc}
@@ -145,8 +145,9 @@ class MicrosoftGraph extends OAuth2
                 $userContact = new User\Contact();
                 $userContact->identifier = $entry->get('id');
                 $userContact->displayName = $entry->get('displayName');
-                if (!empty($entry->get('emailAddresses'))) {
-                    $userContact->email = $entry->get('emailAddresses')[0]->address;
+                $emailAddresses = $entry->get('emailAddresses');
+                if (!empty($emailAddresses)) {
+                    $userContact->email = $emailAddresses[0]->address;
                 }
                 // only add to collection if we have usefull data
                 if (!empty($userContact->displayName) || !empty($userContact->email)) {

@@ -50,7 +50,7 @@ class Google extends OAuth2
      * {@inheritdoc}
      */
     // phpcs:ignore
-    public $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+    protected $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
     /**
      * {@inheritdoc}
@@ -60,12 +60,12 @@ class Google extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://accounts.google.com/o/oauth2/auth';
+    protected $authorizeUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://accounts.google.com/o/oauth2/token';
+    protected $accessTokenUrl = 'https://oauth2.googleapis.com/token';
 
     /**
      * {@inheritdoc}

@@ -40,7 +40,7 @@ class StackExchange extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = null;
+    protected $scope = null;
 
     /**
      * {@inheritdoc}

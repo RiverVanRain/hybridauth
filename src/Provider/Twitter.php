@@ -104,7 +104,7 @@ class Twitter extends OAuth1
         $userProfile->region = $data->get('location');
 
         $userProfile->profileURL = $data->exists('screen_name')
-            ? ('http://twitter.com/' . $data->get('screen_name'))
+            ? ('https://twitter.com/' . $data->get('screen_name'))
             : '';
 
         $photoSize = $this->config->get('photo_size') ?: 'original';
@@ -181,7 +181,7 @@ class Twitter extends OAuth1
         $userContact->description = $item->get('description');
 
         $userContact->profileURL = $item->exists('screen_name')
-            ? ('http://twitter.com/' . $item->get('screen_name'))
+            ? ('https://twitter.com/' . $item->get('screen_name'))
             : '';
 
         return $userContact;
@@ -198,7 +198,7 @@ class Twitter extends OAuth1
             $params['status'] = $status['message'];
         }
         
-		if (isset($status['picture'])) {
+	if (isset($status['picture'])) {
             $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'media' => base64_encode(file_get_contents($status['picture'])),
             ]);
@@ -209,7 +209,7 @@ https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-medi
 https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-append
 */
 /*	
-		if (isset($status['video'])) {
+       if (isset($status['video'])) {
             $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'command' => 'INIT',
 				'total_bytes' => $status['video_size'],
@@ -269,7 +269,7 @@ https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-medi
         $userActivity->user->photoURL = $item->filter('user')->get('profile_image_url');
 
         $userActivity->user->profileURL = $item->filter('user')->get('screen_name')
-            ? ('http://twitter.com/' . $item->filter('user')->get('screen_name'))
+            ? ('https://twitter.com/' . $item->filter('user')->get('screen_name'))
             : '';
 
         return $userActivity;

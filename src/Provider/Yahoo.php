@@ -25,7 +25,7 @@ class Yahoo extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'profile';
+    protected $scope = 'profile';
 
     /**
      * {@inheritdoc}
