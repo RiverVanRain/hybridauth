@@ -104,7 +104,7 @@ class Twitter extends OAuth1
         $userProfile->region = $data->get('location');
 
         $userProfile->profileURL = $data->exists('screen_name')
-            ? ('http://twitter.com/' . $data->get('screen_name'))
+            ? ('https://twitter.com/' . $data->get('screen_name'))
             : '';
 
         $photoSize = $this->config->get('photo_size') ?: 'original';
@@ -181,7 +181,7 @@ class Twitter extends OAuth1
         $userContact->description = $item->get('description');
 
         $userContact->profileURL = $item->exists('screen_name')
-            ? ('http://twitter.com/' . $item->get('screen_name'))
+            ? ('https://twitter.com/' . $item->get('screen_name'))
             : '';
 
         return $userContact;
@@ -192,22 +192,35 @@ class Twitter extends OAuth1
      */
     public function setUserStatus($status)
     {
-        if (is_string($status)) {
-            $status = ['status' => $status];
-        }
-
         // Prepare request parameters.
         $params = [];
-        if (isset($status['status'])) {
-            $params['status'] = $status['status'];
+        if (isset($status['message'])) {
+            $params['status'] = $status['message'];
         }
-        if (isset($status['picture'])) {
+        
+	if (isset($status['picture'])) {
             $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'media' => base64_encode(file_get_contents($status['picture'])),
             ]);
             $params['media_ids'] = $media->media_id;
         }
-
+/* WIP	
+https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-init
+https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-append
+*/
+/*	
+       if (isset($status['video'])) {
+            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+                'command' => 'INIT',
+				'total_bytes' => $status['video_size'],
+				'expires_after_secs' => 86400,
+				'media_type' => 'video/mp4',
+				'media_category' => 'tweet_video',
+				'media' => base64_encode(file_get_contents($status['video'])),
+            ]);
+            $params['media_ids'] = $media->media_id;
+        }
+*/
         $response = $this->apiRequest('statuses/update.json', 'POST', $params);
 
         return $response;
@@ -256,7 +269,7 @@ class Twitter extends OAuth1
         $userActivity->user->photoURL = $item->filter('user')->get('profile_image_url');
 
         $userActivity->user->profileURL = $item->filter('user')->get('screen_name')
-            ? ('http://twitter.com/' . $item->filter('user')->get('screen_name'))
+            ? ('https://twitter.com/' . $item->filter('user')->get('screen_name'))
             : '';
 
         return $userActivity;

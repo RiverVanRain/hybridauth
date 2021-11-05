@@ -127,4 +127,25 @@ class Session implements StorageInterface
             $_SESSION[$this->storeNamespace] = $tmp;
         }
     }
+	
+    /**
+     * Returns session storage as a serialized string
+     * @return string|null
+     */
+    public function getSessionData() {
+        if (isset($_SESSION[$this->storeNamespace])) {
+	    return serialize($_SESSION[$this->storeNamespace]);
+	}
+	return null;
+    }
+
+    /**
+     * Restores the session from serialized session data
+     * 
+     * @param string $sessiondata Serialized session data
+     * @return void
+     */
+    public function restoreSessionData($sessiondata = null) {
+        $_SESSION[$this->storeNamespace] = unserialize($sessiondata);
+    }
 }
