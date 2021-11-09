@@ -201,7 +201,7 @@ class Facebook extends OAuth2
 
         $userProfile->region = $data->filter('hometown')->get('name');
 
-        $photoSize = $this->config->get('photo_size') ?: '150';
+        $photoSize = $this->config->get('photo_size') ?: '180';
 
         $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier;
         $userProfile->photoURL .= '/picture?width=' . $photoSize . '&height=' . $photoSize;

@@ -198,7 +198,7 @@ class Twitter extends OAuth1
             $params['status'] = $status['message'];
         }
         
-	if (isset($status['picture'])) {
+		if (isset($status['picture'])) {
             $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'media' => base64_encode(file_get_contents($status['picture'])),
             ]);
