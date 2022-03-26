@@ -110,7 +110,7 @@ final class Parser
      *
      * @return array
      */
-    public function parseBirthday((string) $birthday)
+    public function parseBirthday($birthday)
     {
         $birthday = date_parse($birthday);
 
