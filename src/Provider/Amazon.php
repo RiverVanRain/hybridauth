@@ -41,8 +41,8 @@ class Amazon extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.amazon.com/docs/login-with-amazon/documentation-overview.html';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected function initialize()

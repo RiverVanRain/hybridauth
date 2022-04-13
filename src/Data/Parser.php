@@ -106,7 +106,6 @@ final class Parser
      * needs to be improved
      *
      * @param $birthday
-     * @param $seperator
      *
      * @return array
      */
