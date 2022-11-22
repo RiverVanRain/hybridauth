@@ -141,7 +141,6 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             'contact/postalCode/home',
             'contact/city/home',
             'contact/country/home',
-
             'media/image/default',
         ];
 

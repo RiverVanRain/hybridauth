@@ -32,14 +32,11 @@ class WordPressApp extends OAuth2 {
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $data->get('ID');
-        $userProfile->displayName = $data->get('display_name');
+        $userProfile->displayName = $data->get('display_name') ?: $data->get('username');
         $userProfile->photoURL = $data->get('avatar_URL');
         $userProfile->profileURL = $data->get('profile_URL');
         $userProfile->email = $data->get('email');
         $userProfile->language = $data->get('language');
-
-        $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
-
         $userProfile->emailVerified = $data->get('email_verified') ? $data->get('email') : '';
 
         return $userProfile;
