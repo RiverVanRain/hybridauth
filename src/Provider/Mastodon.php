@@ -14,7 +14,7 @@ class Mastodon extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'read';
+    protected $scope = 'read write';
 
     /**
      * {@inheritdoc}
@@ -58,11 +58,61 @@ class Mastodon extends OAuth2
 
         $userProfile->identifier = $data->get('id');
         $userProfile->displayName = $data->get('username');
-        $userProfile->firstName = $data->get('display_name');
         $userProfile->photoURL = $data->get('avatar') ?: $data->get('avatar_static');
-		$userProfile->profileURL = $data->get('url');
+		$userProfile->webSiteURL = $data->get('url');
 		$userProfile->description = $data->get('note');
+		$userProfile->firstName = $data->get('display_name');
 		
 		return $userProfile;
+    }
+	
+	
+	public function setUserStatus($status)
+    {
+        // Prepare request parameters.
+        $params = [];
+        if (isset($status['message'])) {
+            $params['status'] = $status['message'];
+        }
+		
+		if (isset($status['picture'])) {
+			$headers = [
+				'Content-Type' => 'multipart/form-data',
+			];
+			
+			$pictures = $status['picture'];
+			
+			$ids = [];
+			
+			foreach($pictures as $picture) {
+				$images = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
+					'file' => new \CurlFile($picture, 'image/jpg', 'filename'),
+				], $headers, true);
+			   
+				$ids[] = $images->id;
+			}
+			
+			$params['media_ids'] = $ids;
+        }
+		
+		if (isset($status['video'])) {
+            $headers = [
+				'Content-Type' => 'multipart/form-data',
+			];
+	
+			$videos = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
+                'file' => new \CurlFile($status['video'], 'video/mp4', 'filename'),
+            ], $headers, true);
+		   
+		    $params['media_ids'] = [$videos->id];
+        }
+		
+		$headers = [
+			'Content-Type' => 'application/json',
+		];
+
+        $response = $this->apiRequest('statuses', 'POST', $params, $headers, false);
+
+        return $response;
     }
 }

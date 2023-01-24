@@ -34,7 +34,7 @@ class Keycloak extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'openid profile email';
+    protected $scope = 'openid profile email';
 
     /**
      * {@inheritdoc}

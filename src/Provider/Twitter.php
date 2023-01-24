@@ -199,11 +199,21 @@ class Twitter extends OAuth1
         }
         
 		if (isset($status['picture'])) {
-            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
-                'media' => base64_encode(file_get_contents($status['picture'])),
-            ]);
-            $params['media_ids'] = $media->media_id;
+			$pictures = $status['picture'];
+			
+			$ids = [];
+			
+			foreach($pictures as $picture) {
+				$media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+					'media' => base64_encode(file_get_contents($picture)),
+				]);
+				
+				$ids[] = $media->media_id;
+			}
+			
+			$params['media_ids'] = implode(',', $ids); 
         }
+		
 /* WIP	
 https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-init
 https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-append
@@ -221,7 +231,11 @@ https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-medi
             $params['media_ids'] = $media->media_id;
         }
 */
-        $response = $this->apiRequest('statuses/update.json', 'POST', $params);
+        $headers = [
+			'Content-Type' => 'application/json',
+		];
+		
+		$response = $this->apiRequest('statuses/update.json', 'POST', $params, $headers, false);
 
         return $response;
     }
