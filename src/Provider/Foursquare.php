@@ -40,7 +40,7 @@ class Foursquare extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://developer.foursquare.com/overview/auth';
+    protected $apiDocumentation = 'https://location.foursquare.com/developer/reference/authentication-v2';
 
     /**
      * {@inheritdoc}
@@ -99,7 +99,9 @@ class Foursquare extends OAuth2
      */
     public function getUserContacts()
     {
-        $response = $this->apiRequest('users/self/friends');
+		$response = $this->apiRequest('users/self/lists', 'GET', [
+            'group' => 'friends',
+        ]);
 
         $data = new Data\Collection($response);
 
