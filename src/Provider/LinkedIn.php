@@ -56,8 +56,8 @@ class LinkedIn extends OAuth2
             ];
         }
     }
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     public function getUserProfile()

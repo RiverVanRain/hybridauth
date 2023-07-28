@@ -71,7 +71,7 @@ class Twitter extends OAuth1 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://dev.twitter.com/web/sign-in/implementing';
+    protected $apiDocumentation = 'https://developer.twitter.com/en/docs/authentication/oauth-1-0a';
 
     /**
      * {@inheritdoc}
