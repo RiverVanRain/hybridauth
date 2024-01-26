@@ -122,6 +122,14 @@ abstract class AbstractAdapter implements AdapterInterface
      * Adapter initializer
      */
     abstract protected function initialize();
+	
+	/**
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
     /**
      * {@inheritdoc}
