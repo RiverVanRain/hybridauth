@@ -16,6 +16,24 @@ use Hybridauth\Data\Collection;
 
 /**
  * Seznam OAuth2 provider adapter.
+ *
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'scope' => 'identity, contact-phone, avatar',
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\Seznam($config);
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
+ *   }
  */
 class Seznam extends OAuth2
 {
@@ -55,11 +73,28 @@ class Seznam extends OAuth2
         $userProfile = new Profile();
 
         $userProfile->identifier = $data->get('oauth_user_id');
-        $userProfile->email = $data->get('account_name');
+        $userProfile->email = $this->getEmailFromCollection($data);
         $userProfile->firstName = $data->get('firstname');
         $userProfile->lastName = $data->get('lastname');
         $userProfile->photoURL = $data->get('avatar_url');
+		$userProfile->phone = $data->get('contact_phone');
 
         return $userProfile;
+    }
+	
+    private function getEmailFromCollection(Data\Collection $data)
+    {
+        $email = $data->get('email');
+        if ($email !== null) {
+            return $email;
+        }
+
+        $username = $data->get('username');
+        $domain = $data->get('domain');
+        if ($username === null || $domain === null) {
+            return null;
+        }
+
+        return sprintf("%s@%s", $username, $domain);
     }
 }
