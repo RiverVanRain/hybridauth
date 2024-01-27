@@ -96,6 +96,8 @@ class Apple extends OAuth2
      * you must provide values with encoded spaces (`%20`) instead of plus (`+`) signs.
      */
     protected $AuthorizeUrlParametersEncType = PHP_QUERY_RFC3986;
+    
+    protected $supportRequestState = false;
 
     /**
      * {@inheritdoc}

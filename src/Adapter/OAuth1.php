@@ -239,7 +239,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
      */
     public function isConnected()
     {
-        return (bool)$this->getStoredData('access_token');
+        return (bool) $this->getStoredData('access_token');
     }
 
     /**
@@ -320,8 +320,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $this->AuthorizeUrlParameters = !empty($parameters)
             ? $parameters
             : array_replace(
-                (array)$this->AuthorizeUrlParameters,
-                (array)$this->config->get('authorize_url_parameters')
+                (array) $this->AuthorizeUrlParameters,
+                (array) $this->config->get('authorize_url_parameters')
             );
 
         $this->AuthorizeUrlParameters['oauth_token'] = $this->getStoredData('request_token');
@@ -599,7 +599,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         );
 
         $uri = $request->get_normalized_http_url();
-        $headers = array_replace($request->to_header(), (array)$headers);
+        $headers = array_replace($request->to_header(), (array) $headers);
 
         $response = $this->httpClient->request(
             $uri,

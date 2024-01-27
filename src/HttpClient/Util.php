@@ -89,12 +89,22 @@ class Util
         $protocol = 'http://';
 
         if (($collection->get('HTTPS') && $collection->get('HTTPS') !== 'off') ||
-            $collection->get('HTTP_X_FORWARDED_PROTO') === 'https') {
+            self::isXForwardedProtoHttps($collection->get('HTTP_X_FORWARDED_PROTO'))) {
             $protocol = 'https://';
         }
 
         return $protocol .
             $collection->get('HTTP_HOST') .
             $collection->get($requestUri ? 'REQUEST_URI' : 'PHP_SELF');
+    }
+	
+	public static function isXForwardedProtoHttps($xForwardedProto)
+    {
+        $protos = explode(',', (string) $xForwardedProto);
+        if (count($protos) > 0) {
+            return trim($protos[0]) === 'https';
+        }
+
+        return false;
     }
 }

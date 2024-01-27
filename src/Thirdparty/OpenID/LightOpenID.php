@@ -11,6 +11,7 @@ namespace Hybridauth\Thirdparty\OpenID;
 
 use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\ExceptionInterface;
+use Hybridauth\HttpClient\Util;
 
 /**
  * Class ErrorException
@@ -242,7 +243,7 @@ class LightOpenID
         if (!empty($_SERVER['HTTPS'])) {
             $use_secure_protocol = ($_SERVER['HTTPS'] !== 'off');
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-            $use_secure_protocol = ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+            $use_secure_protocol = (Util::isXForwardedProtoHttps($_SERVER['HTTP_X_FORWARDED_PROTO']));
         } elseif (isset($_SERVER['HTTP__WSSC'])) {
             $use_secure_protocol = ($_SERVER['HTTP__WSSC'] == 'https');
         } else {

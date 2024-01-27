@@ -19,6 +19,7 @@ use Hybridauth\Atom\Author;
 use Hybridauth\Atom\AtomFeedBuilder;
 use Hybridauth\Atom\AtomHelper;
 use Hybridauth\Atom\Filter;
+use Abraham\TwitterOAuth\TwitterOAuth;
 
 /**
  * Twitter OAuth1 provider adapter.
@@ -49,6 +50,11 @@ use Hybridauth\Atom\Filter;
 class Twitter extends OAuth1 implements AtomInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    protected $scope = ['users.read', 'tweet.read', 'tweet.write', 'offline.access'];
+	
+	/**
      * {@inheritdoc}
      */
     protected $apiBaseUrl = 'https://api.twitter.com/1.1/';
@@ -203,7 +209,7 @@ class Twitter extends OAuth1 implements AtomInterface
         // Prepare request parameters.
         $params = [];
         if (isset($status['message'])) {
-            $params['status'] = $status['message'];
+            $params['text'] = $status['message'];
         }
         
 		if (isset($status['picture'])) {
@@ -243,7 +249,14 @@ https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-medi
 			'Content-Type' => 'application/json',
 		];
 		
-		return $this->apiRequest('statuses/update.json', 'POST', $params, $headers, false);
+		//return $this->apiRequest('https://api.twitter.com/2/tweets', 'POST', $params, $headers, false);
+		
+		$tokens = $this->config->get('tokens');
+		
+		$connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret,  $tokens['access_token'], $tokens['access_token_secret']);
+		$connection->setApiVersion('2');
+		
+		return $connection->post('tweets', $params, true);
     }
 
     /**
