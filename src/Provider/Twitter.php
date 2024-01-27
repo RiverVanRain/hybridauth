@@ -20,6 +20,7 @@ use Hybridauth\Atom\AtomFeedBuilder;
 use Hybridauth\Atom\AtomHelper;
 use Hybridauth\Atom\Filter;
 use Abraham\TwitterOAuth\TwitterOAuth;
+use Abraham\TwitterOAuth\TwitterOAuthException;
 
 /**
  * Twitter OAuth1 provider adapter.
@@ -211,45 +212,72 @@ class Twitter extends OAuth1 implements AtomInterface
         if (isset($status['message'])) {
             $params['text'] = $status['message'];
         }
-        
+		
+		$ids = [];
+		
 		if (isset($status['picture'])) {
 			$pictures = $status['picture'];
-			
-			$ids = [];
 			
 			foreach($pictures as $picture) {
 				$media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
 					'media' => base64_encode(file_get_contents($picture)),
 				]);
 				
-				$ids[] = $media->media_id;
+				array_push($ids, $media->media_id_string);
 			}
-			
-			$params['media_ids'] = implode(',', $ids); 
         }
 		
-/* WIP	
-https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-init
-https://developer.twitter.com/en/docs/media/upload-media/api-reference/post-media-upload-append
-*/
-/*	
-       if (isset($status['video'])) {
-            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+		// https://developer.twitter.com/en/docs/twitter-api/v1/media/upload-media/uploading-media/chunked-media-upload
+		if (isset($status['video'])) {
+			$init = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'command' => 'INIT',
 				'total_bytes' => $status['video_size'],
 				'expires_after_secs' => 86400,
 				'media_type' => 'video/mp4',
 				'media_category' => 'tweet_video',
-				'media' => base64_encode(file_get_contents($status['video'])),
             ]);
-            $params['media_ids'] = $media->media_id;
+			
+			if (!isset($init->media_id_string)) {
+				throw new TwitterOAuthException('Missing media_id_string');
+			}
+			
+			// Append
+			$segmentIndex = 0;
+			$media = fopen($status['video'], 'rb');
+			while (!feof($media)) {
+				$this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+					'command' => 'APPEND',
+					'media_id' => $init->media_id_string,
+					'segment_index' => $segmentIndex++,
+					'media_data' => base64_encode(
+						fread($media, 2500000),
+					),
+				]);
+			}
+			fclose($media);
+			// Finalize
+			$finalize = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+				'command' => 'FINALIZE',
+				'media_id' => $init->media_id_string,
+			]);
+			
+			sleep(5);
+			
+			$state = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'GET', [
+                'command' => 'STATUS',
+				'media_id' => $finalize->media_id_string,
+            ]);
+			
+			if ($state->processing_info->state === 'succeeded') {
+				array_push($ids, $finalize->media_id_string);
+			}
         }
-*/
-        $headers = [
-			'Content-Type' => 'application/json',
-		];
 		
-		//return $this->apiRequest('https://api.twitter.com/2/tweets', 'POST', $params, $headers, false);
+		if (!empty($ids)) {
+			$params['media'] = [
+				'media_ids' => $ids,
+			]; 
+		}
 		
 		$tokens = $this->config->get('tokens');
 		
