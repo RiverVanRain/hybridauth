@@ -281,9 +281,8 @@ class Twitter extends OAuth1 implements AtomInterface
 			]; 
 		}
 		
-		$tokens = $this->config->get('access');
+		$connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret,  $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
 		
-		$connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret,  $tokens['token'], $tokens['token_secret']);
 		$connection->setApiVersion('2');
 		
 		return $connection->post('tweets', $params, true);
