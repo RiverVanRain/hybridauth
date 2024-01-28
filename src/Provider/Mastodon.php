@@ -75,6 +75,8 @@ class Mastodon extends OAuth2
             $params['status'] = $status['message'];
         }
 		
+		$ids = [];
+		
 		if (isset($status['picture'])) {
 			$headers = [
 				'Content-Type' => 'multipart/form-data',
@@ -82,17 +84,13 @@ class Mastodon extends OAuth2
 			
 			$pictures = $status['picture'];
 			
-			$ids = [];
-			
 			foreach($pictures as $picture) {
 				$images = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
 					'file' => new \CurlFile($picture, 'image/jpg', 'filename'),
 				], $headers, true);
 			   
-				$ids[] = $images->id;
+				array_push($ids, $images->id);
 			}
-			
-			$params['media_ids'] = $ids;
         }
 		
 		if (isset($status['video'])) {
@@ -103,9 +101,21 @@ class Mastodon extends OAuth2
 			$videos = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
                 'file' => new \CurlFile($status['video'], 'video/mp4', 'filename'),
             ], $headers, true);
-		   
-		    $params['media_ids'] = [$videos->id];
+			
+			sleep(5);
+			
+			$state = $this->apiRequest($this->config->get('url') . '/api/v1/media/' . urlencode($videos->id), 'GET');
+			
+			if (isset($state->url)) {
+				array_push($ids, $videos->id);
+			}
         }
+		
+		if (!empty($ids)) {
+			$ids = array_slice($ids, 0, 4);
+			
+			$params['media_ids'] = $ids; 
+		}
 		
 		$headers = [
 			'Content-Type' => 'application/json',

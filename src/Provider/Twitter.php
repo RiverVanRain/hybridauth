@@ -274,6 +274,8 @@ class Twitter extends OAuth1 implements AtomInterface
         }
 		
 		if (!empty($ids)) {
+			$ids = array_slice($ids, 0, 4);
+			
 			$params['media'] = [
 				'media_ids' => $ids,
 			]; 
