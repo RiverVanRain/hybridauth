@@ -36,8 +36,7 @@ class Yandex extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation
-        = 'https://yandex.com/dev/oauth/doc/dg/concepts/about-docpage/';
+    protected $apiDocumentation = 'https://yandex.com/dev/oauth/doc/dg/concepts/about-docpage/';
 
     /**
      * Load the user profile from the IDp api client

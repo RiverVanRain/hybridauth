@@ -48,7 +48,7 @@ use Abraham\TwitterOAuth\TwitterOAuthException;
  *       echo $e->getMessage() ;
  *   }
  */
-class Twitter extends OAuth1 implements AtomInterface
+class X extends OAuth1 implements AtomInterface
 {
     /**
      * {@inheritdoc}

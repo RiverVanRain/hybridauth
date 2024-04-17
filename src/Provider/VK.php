@@ -15,7 +15,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Vkontakte OAuth2 provider adapter.
+ * Vk OAuth2 provider adapter.
  *
  * Example:
  *
@@ -39,7 +39,7 @@ use Hybridauth\User;
  *       print $e->getMessage() ;
  *   }
  */
-class Vkontakte extends OAuth2
+class Vk extends OAuth2
 {
     const API_VERSION = '5.95';
 
