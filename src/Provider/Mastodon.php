@@ -84,7 +84,11 @@ class Mastodon extends OAuth2
 			
 			$pictures = $status['picture'];
 			
-			foreach($pictures as $picture) {
+			if (!is_array($pictures)) {
+				$pictures = [$pictures];
+			}
+			
+			foreach ($pictures as $picture) {
 				$images = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
 					'file' => new \CurlFile($picture, 'image/jpg', 'filename'),
 				], $headers, true);

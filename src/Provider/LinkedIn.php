@@ -185,7 +185,6 @@ class LinkedIn extends OAuth2
             ];
         }
 
-
         $headers = [
             'Content-Type' => 'application/json',
             'x-li-format' => 'json',

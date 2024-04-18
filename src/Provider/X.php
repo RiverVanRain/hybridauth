@@ -218,6 +218,10 @@ class X extends OAuth1 implements AtomInterface
 		if (isset($status['picture'])) {
 			$pictures = $status['picture'];
 			
+			if (!is_array($pictures)) {
+				$pictures = [$pictures];
+			}
+			
 			foreach($pictures as $picture) {
 				$media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
 					'media' => base64_encode(file_get_contents($picture)),
