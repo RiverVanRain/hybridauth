@@ -66,7 +66,7 @@ class Facebook extends OAuth2 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://graph.facebook.com/v8.0/';
+    protected $apiBaseUrl = 'https://graph.facebook.com/v20.0/';
 
     /**
      * {@inheritdoc}
