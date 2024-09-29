@@ -23,8 +23,8 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
 
 /**
- * Twitter OAuth1 provider adapter.
- * Uses OAuth1 not OAuth2 because many Twitter endpoints are built around OAuth1.
+ * X OAuth1 provider adapter.
+ * Uses OAuth1 not OAuth2 because many X endpoints are built around OAuth1.
  *
  * Example:
  *
@@ -32,10 +32,10 @@ use Abraham\TwitterOAuth\TwitterOAuthException;
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys' => ['key' => '', 'secret' => ''], // OAuth1 uses 'key' not 'id'
  *       'authorize' => true // Needed to perform actions on behalf of users (see below link)
- *         // https://developer.twitter.com/en/docs/authentication/oauth-1-0a/obtaining-user-access-tokens
+ *         // https://developer.[.com/en/docs/authentication/oauth-1-0a/obtaining-user-access-tokens
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Twitter($config);
+ *   $adapter = new Hybridauth\Provider\X($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -58,27 +58,27 @@ class X extends OAuth1 implements AtomInterface
 	/**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://api.twitter.com/1.1/';
+    protected $apiBaseUrl = 'https://api.x.com/1.1/';
 
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://api.twitter.com/oauth/authenticate';
+    protected $authorizeUrl = 'https://api.x.com/oauth/authenticate';
 
     /**
      * {@inheritdoc}
      */
-    protected $requestTokenUrl = 'https://api.twitter.com/oauth/request_token';
+    protected $requestTokenUrl = 'https://api.x.com/oauth/request_token';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
+    protected $accessTokenUrl = 'https://api.x.com/oauth/access_token';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://developer.twitter.com/en/docs/authentication/oauth-1-0a';
+    protected $apiDocumentation = 'https://developer.x.com/en/docs/authentication/oauth-1-0a';
 
     /**
      * {@inheritdoc}
@@ -86,7 +86,7 @@ class X extends OAuth1 implements AtomInterface
     protected function getAuthorizeUrl($parameters = [])
     {
         if ($this->config->get('authorize') === true) {
-            $this->authorizeUrl = 'https://api.twitter.com/oauth/authorize';
+            $this->authorizeUrl = 'https://api.x.com/oauth/authorize';
         }
 
         return parent::getAuthorizeUrl($parameters);
@@ -119,7 +119,7 @@ class X extends OAuth1 implements AtomInterface
         $userProfile->region = $data->get('location');
 
         $userProfile->profileURL = $data->exists('screen_name')
-            ? ('https://twitter.com/' . $data->get('screen_name'))
+            ? ('https://x.com/' . $data->get('screen_name'))
             : '';
 
         $photoSize = $this->config->get('photo_size') ?: 'original';
@@ -196,7 +196,7 @@ class X extends OAuth1 implements AtomInterface
         $userContact->description = $item->get('description');
 
         $userContact->profileURL = $item->exists('screen_name')
-            ? ('https://twitter.com/' . $item->get('screen_name'))
+            ? ('https://x.com/' . $item->get('screen_name'))
             : '';
 
         return $userContact;
@@ -231,7 +231,7 @@ class X extends OAuth1 implements AtomInterface
 			}
         }
 		
-		// https://developer.twitter.com/en/docs/twitter-api/v1/media/upload-media/uploading-media/chunked-media-upload
+		// https://developer.x.com/en/docs/x-api/v1/media/upload-media/uploading-media/chunked-media-upload
 		if (isset($status['video'])) {
 			$init = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
                 'command' => 'INIT',
@@ -335,7 +335,7 @@ class X extends OAuth1 implements AtomInterface
         $userActivity->user->photoURL = $item->filter('user')->get('profile_image_url');
 
         $userActivity->user->profileURL = $item->filter('user')->get('screen_name')
-            ? ('https://twitter.com/' . $item->filter('user')->get('screen_name'))
+            ? ('https://x.com/' . $item->filter('user')->get('screen_name'))
             : '';
 
         return $userActivity;
@@ -350,7 +350,7 @@ class X extends OAuth1 implements AtomInterface
         list($atoms) = $this->getAtoms($filter);
 
         $utility = new AtomFeedBuilder();
-        $title = 'Twitter feed of ' . $userProfile->displayName;
+        $title = 'X feed of ' . $userProfile->displayName;
         $feedId = 'urn:hybridauth:twitter:' . $userProfile->identifier . ':' . md5(serialize(func_get_args()));
         $urnStub = 'urn:hybridauth:twitter:';
         $url = $userProfile->profileURL;
@@ -429,10 +429,10 @@ class X extends OAuth1 implements AtomInterface
         $atom->identifier = $item->id_str;
         $atom->isIncomplete = false;
         $atom->published = new \DateTime($item->created_at);
-        $atom->url = "https://twitter.com/{$item->user->screen_name}/status/{$item->id_str}";
+        $atom->url = "https://x.com/{$item->user->screen_name}/status/{$item->id_str}";
 
-        $urlUsernames = '<a href="https://twitter.com/$1">@$1</a>';
-        $urlHashtags = '<a href="https://twitter.com/hashtag/$1?src=hash">#$1</a>';
+        $urlUsernames = '<a href="https://x.com/$1">@$1</a>';
+        $urlHashtags = '<a href="https://x.com/hashtag/$1?src=hash">#$1</a>';
         $detectUrls = true;
         list($text, $repped) = AtomHelper::processCodes($item->text, $urlUsernames, $urlHashtags, $detectUrls);
         if ((!$repped) && (AtomHelper::plainTextToHtml(AtomHelper::htmlToPlainText($text)) == $text)) {
@@ -444,7 +444,7 @@ class X extends OAuth1 implements AtomInterface
         $atom->author = new Author();
         $atom->author->identifier = strval($item->user->id);
         $atom->author->displayName = $item->user->screen_name;
-        $atom->author->profileURL = 'https://twitter.com/' . $item->user->screen_name;
+        $atom->author->profileURL = 'https://x.com/' . $item->user->screen_name;
         if (!empty($item->user->profile_image_url_https)) {
             $atom->author->photoURL = str_replace('_normal', '', $item->user->profile_image_url_https);
         }
@@ -492,7 +492,7 @@ class X extends OAuth1 implements AtomInterface
         $ret = null;
 
         $matches = [];
-        if (preg_match('#^https://twitter\.com/[^/]+/status/(\d+)#', $url, $matches) != 0) {
+        if (preg_match('#^https://x\.com/[^/]+/status/(\d+)#', $url, $matches) != 0) {
             $identifier = $matches[1];
             $ret = $this->getAtomFull($identifier);
         }
@@ -514,12 +514,12 @@ class X extends OAuth1 implements AtomInterface
     public function saveAtom($atom, &$messages = [])
     {
         if ($atom->identifier !== null) {
-            throw new NotImplementedException('Twitter does not allow edits or identifier-specifying.');
+            throw new NotImplementedException('X does not allow edits or identifier-specifying.');
         }
 
         // Work out status...
 
-        // Lots of work to stay within the Twitter limits!
+        // Lots of work to stay within the X limits!
 
         $maxLength = intval($this->config->get('max_length')) ?: 240;
         $segmentSize = intval($this->config->get('segment_size')) ?: (512 * 1024);
@@ -739,7 +739,7 @@ class X extends OAuth1 implements AtomInterface
      */
     public function saveCategory($category)
     {
-        throw new NotImplementedException('There are no categories on Twitter.');
+        throw new NotImplementedException('There are no categories on X.');
     }
 
     /**
@@ -747,6 +747,6 @@ class X extends OAuth1 implements AtomInterface
      */
     public function deleteCategory($identifier)
     {
-        throw new NotImplementedException('There are no categories on Twitter.');
+        throw new NotImplementedException('There are no categories on X.');
     }
 }
