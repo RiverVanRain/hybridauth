@@ -289,7 +289,7 @@ class X extends OAuth1 implements AtomInterface
 		
 		$connection->setApiVersion('2');
 		
-		return $connection->post('tweets', $params, true);
+		return $connection->post('tweets', $params, ['jsonPayload' => true]);
     }
 
     /**
