@@ -315,7 +315,18 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         try {
             $this->authenticateCheckError();
 
-            $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+            $code = null;
+			
+			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $code = filter_input(INPUT_POST, 'code');
+            } else {
+                $request_uri = $_SERVER['REQUEST_URI'];
+                $query_string = parse_url($request_uri, PHP_URL_QUERY);
+                parse_str($query_string, $params);
+                if (isset($params['code'])) {
+                    $code = $params['code'];
+                }
+            }
 
             if (empty($code)) {
                 $this->authenticateBegin();
@@ -411,9 +422,24 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
             [HttpClient\Util::getCurrentUrl(true)]
         );
+		
+		$code = null;
+		$state = null;
 
-        $state = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'state');
-        $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $code = filter_input(INPUT_POST, 'code');
+            $state = filter_input(INPUT_POST, 'state');
+        } else {
+            $request_uri = $_SERVER['REQUEST_URI'];
+            $query_string = parse_url($request_uri, PHP_URL_QUERY);
+            parse_str($query_string, $params);
+            if (isset($params['code'])) {
+                $code = $params['code'];
+            }
+			if (isset($params['state'])) {
+                $state = $params['state'];
+            }
+        }
 
         /**
          * Authorization Request State
