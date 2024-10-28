@@ -134,9 +134,9 @@ class Session implements StorageInterface
      */
     public function getSessionData() {
         if (isset($_SESSION[$this->storeNamespace])) {
-	    return serialize($_SESSION[$this->storeNamespace]);
-	}
-	return null;
+			return serialize($_SESSION[$this->storeNamespace]);
+		}
+		return null;
     }
 
     /**
