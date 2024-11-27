@@ -41,6 +41,21 @@ class GitHub extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.github.com/v3/oauth/';
+	
+	/**
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret
+            ];
+        }
+    }
 
     /**
      * {@inheritdoc}
