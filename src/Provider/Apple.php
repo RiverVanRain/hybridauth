@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -15,14 +16,11 @@ use Hybridauth\Exception\HttpRequestFailedException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\UnexpectedValueException;
-
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
-
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Math\BigInteger;
-
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -96,7 +94,7 @@ class Apple extends OAuth2
      * you must provide values with encoded spaces (`%20`) instead of plus (`+`) signs.
      */
     protected $AuthorizeUrlParametersEncType = PHP_QUERY_RFC3986;
-    
+
     protected $supportRequestState = false;
 
     /**
@@ -247,10 +245,10 @@ class Apple extends OAuth2
             if (!$user->isEmpty()) {
                 $name = $user->get('name');
                 if (!empty($name->firstName)) {
-					$userProfile->firstName = $name->firstName;
-					$userProfile->lastName = $name->lastName;
-					$userProfile->displayName = join(' ', [$userProfile->firstName, $userProfile->lastName]);
-				}
+                    $userProfile->firstName = $name->firstName;
+                    $userProfile->lastName = $name->lastName;
+                    $userProfile->displayName = join(' ', [$userProfile->firstName, $userProfile->lastName]);
+                }
             }
         }
 

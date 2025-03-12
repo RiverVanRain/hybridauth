@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -77,11 +78,11 @@ class Seznam extends OAuth2
         $userProfile->firstName = $data->get('firstname');
         $userProfile->lastName = $data->get('lastname');
         $userProfile->photoURL = $data->get('avatar_url');
-		$userProfile->phone = $data->get('contact_phone');
+        $userProfile->phone = $data->get('contact_phone');
 
         return $userProfile;
     }
-	
+
     private function getEmailFromCollection(Data\Collection $data)
     {
         $email = $data->get('email');

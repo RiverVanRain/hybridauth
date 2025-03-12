@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -260,7 +261,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         if ($this->config->exists('tokens')) {
             $this->setAccessToken($this->config->get('tokens'));
         }
-        
+
         if ($this->config->exists('supportRequestState')) {
             $this->supportRequestState = $this->config->get('supportRequestState');
         }
@@ -316,8 +317,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->authenticateCheckError();
 
             $code = null;
-			
-			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $code = filter_input(INPUT_POST, 'code');
             } else {
                 $request_uri = $_SERVER['REQUEST_URI'];
@@ -422,9 +423,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
             [HttpClient\Util::getCurrentUrl(true)]
         );
-		
-		$code = null;
-		$state = null;
+
+        $code = null;
+        $state = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $code = filter_input(INPUT_POST, 'code');
@@ -436,7 +437,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             if (isset($params['code'])) {
                 $code = $params['code'];
             }
-			if (isset($params['state'])) {
+            if (isset($params['state'])) {
                 $state = $params['state'];
             }
         }
@@ -450,7 +451,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
          *
          * http://tools.ietf.org/html/rfc6749#section-4.1.1
          */
-        if ($this->supportRequestState
+        if (
+            $this->supportRequestState
             && $this->getStoredData('authorization_state') != $state
         ) {
             throw new InvalidAuthorizationStateException(
@@ -458,8 +460,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
                 . 'of this page is either invalid or has already been consumed.'
             );
         }
-		
-		// Before request oauth server, the basic authorization info should be provided.
+
+        // Before request oauth server, the basic authorization info should be provided.
         $basic = base64_encode($this->tokenExchangeParameters['client_id'] . ':' . $this->tokenExchangeParameters['client_secret']);
         $this->tokenExchangeHeaders['Authorization'] = 'Basic ' . $basic;
 

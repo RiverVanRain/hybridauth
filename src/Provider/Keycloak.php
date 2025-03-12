@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -30,7 +31,6 @@ use Hybridauth\User;
  */
 class Keycloak extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
@@ -66,7 +66,6 @@ class Keycloak extends OAuth2
 
         $this->authorizeUrl = $this->apiBaseUrl . 'auth';
         $this->accessTokenUrl = $this->apiBaseUrl . 'token';
-
     }
 
     /**
@@ -90,8 +89,8 @@ class Keycloak extends OAuth2
         $userProfile->firstName = $data->get('given_name');
         $userProfile->lastName = $data->get('family_name');
         $userProfile->emailVerified = $data->get('email_verified');
-		
-		// Collect organization claim if provided in the IDToken
+
+        // Collect organization claim if provided in the IDToken
         if ($data->exists('organization')) {
             $kc_orgs = array_keys((array) $data->get('organization'));
             $userProfile->data['organization'] = array_shift($kc_orgs); //Get the first key

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -88,8 +89,10 @@ class Util
 
         $protocol = 'http://';
 
-        if (($collection->get('HTTPS') && $collection->get('HTTPS') !== 'off') ||
-            self::isXForwardedProtoHttps($collection->get('HTTP_X_FORWARDED_PROTO'))) {
+        if (
+            ($collection->get('HTTPS') && $collection->get('HTTPS') !== 'off') ||
+            self::isXForwardedProtoHttps($collection->get('HTTP_X_FORWARDED_PROTO'))
+        ) {
             $protocol = 'https://';
         }
 
@@ -97,8 +100,8 @@ class Util
             $collection->get('HTTP_HOST') .
             $collection->get($requestUri ? 'REQUEST_URI' : 'PHP_SELF');
     }
-	
-	public static function isXForwardedProtoHttps($xForwardedProto)
+
+    public static function isXForwardedProtoHttps($xForwardedProto)
     {
         $protos = explode(',', (string) $xForwardedProto);
         if (count($protos) > 0) {

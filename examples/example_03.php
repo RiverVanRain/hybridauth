@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * An example on how use Access Tokens to access providers APIs, and how to setup custom API endpoints.
 */

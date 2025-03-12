@@ -1,4 +1,5 @@
 <?php
+
 /*!
  * Hybridauth
  * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -74,9 +75,9 @@ class MicrosoftGraph extends OAuth2
     protected function initialize()
     {
         parent::initialize();
-		
-		$this->AuthorizeUrlParameters += [
-			'prompt' => 'consent',
+
+        $this->AuthorizeUrlParameters += [
+            'prompt' => 'consent',
         ];
 
         $tenant = $this->config->get('tenant');
@@ -88,8 +89,8 @@ class MicrosoftGraph extends OAuth2
 
             $this->setApiEndpoints($adjustedEndpoints);
         }
-		
-		if ($this->isRefreshTokenAvailable()) {
+
+        if ($this->isRefreshTokenAvailable()) {
             $this->tokenRefreshParameters += [
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,

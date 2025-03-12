@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -122,8 +123,8 @@ abstract class AbstractAdapter implements AdapterInterface
      * Adapter initializer
      */
     abstract protected function initialize();
-	
-	/**
+
+    /**
      * @return mixed
      */
     public function getConfig()

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * This simple example illustrate how to authenticate users with GitHub.
 *

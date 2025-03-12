@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -53,9 +54,9 @@ class X extends OAuth1 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    protected $scope = ['users.read', 'tweet.read', 'tweet.write', 'offline.access'];
-	
-	/**
+    protected $scope = ['users.read', 'tweet.read', 'tweet.write', 'offline.access', 'media.write'];
+
+    /**
      * {@inheritdoc}
      */
     protected $apiBaseUrl = 'https://api.x.com/1.1/';
@@ -212,84 +213,90 @@ class X extends OAuth1 implements AtomInterface
         if (isset($status['message'])) {
             $params['text'] = $status['message'];
         }
-		
-		$ids = [];
-		
-		if (isset($status['picture'])) {
-			$pictures = $status['picture'];
-			
-			if (!is_array($pictures)) {
-				$pictures = [$pictures];
-			}
-			
-			foreach($pictures as $picture) {
-				$media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
-					'media' => base64_encode(file_get_contents($picture)),
-				]);
-				
-				array_push($ids, $media->media_id_string);
-			}
+
+        $media_ids = [];
+
+        if (isset($status['picture'])) {
+            $pictures = $status['picture'];
+
+            if (!is_array($pictures)) {
+                $pictures = [$pictures];
+            }
+
+            foreach ($pictures as $picture) {
+                $media = $this->uploadMedia($picture, 'image');
+                array_push($media_ids, $media->media_id_string);
+            }
         }
-		
-		// https://developer.x.com/en/docs/x-api/v1/media/upload-media/uploading-media/chunked-media-upload
-		if (isset($status['video'])) {
-			$init = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+
+        if (isset($status['video'])) {
+            $media = $this->uploadMedia($status['video'], 'video', $status['video_size']);
+            array_push($media_ids, $media->media_id_string);
+        }
+
+        if (!empty($media_ids)) {
+            $media_ids = array_slice($media_ids, 0, 4);
+            $params['media'] = [
+                'media_ids' => $media_ids,
+            ];
+        }
+
+        $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
+        $connection->setApiVersion('2');
+
+        return $connection->post('tweets', $params, ['jsonPayload' => true]);
+    }
+
+    private function uploadMedia($filePath, $mediaType, $fileSize = null)
+    {
+        $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
+        $connection->setApiVersion('2');
+
+        if ($mediaType === 'image') {
+            $media = $connection->upload('media/upload', ['media' => base64_encode(file_get_contents($filePath))]);
+        } elseif ($mediaType === 'video') {
+            $init = $connection->post('media/upload', [
                 'command' => 'INIT',
-				'total_bytes' => $status['video_size'],
-				'expires_after_secs' => 86400,
-				'media_type' => 'video/mp4',
-				'media_category' => 'tweet_video',
+                'total_bytes' => $fileSize,
+                'expires_after_secs' => 86400,
+                'media_type' => 'video/mp4',
+                'media_category' => 'tweet_video',
             ]);
-			
-			if (!isset($init->media_id_string)) {
-				throw new TwitterOAuthException('Missing media_id_string');
-			}
-			
-			// Append
-			$segmentIndex = 0;
-			$media = fopen($status['video'], 'rb');
-			while (!feof($media)) {
-				$this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
-					'command' => 'APPEND',
-					'media_id' => $init->media_id_string,
-					'segment_index' => $segmentIndex++,
-					'media_data' => base64_encode(
-						fread($media, 2500000),
-					),
-				]);
-			}
-			fclose($media);
-			// Finalize
-			$finalize = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
-				'command' => 'FINALIZE',
-				'media_id' => $init->media_id_string,
-			]);
-			
-			sleep(5);
-			
-			$state = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'GET', [
+
+            if (!isset($init->media_id_string)) {
+                throw new TwitterOAuthException('Missing media_id_string');
+            }
+
+            $segmentIndex = 0;
+            $media = fopen($filePath, 'rb');
+            while (!feof($media)) {
+                $connection->post('media/upload', [
+                    'command' => 'APPEND',
+                    'media_id' => $init->media_id_string,
+                    'segment_index' => $segmentIndex++,
+                    'media_data' => base64_encode(fread($media, 2500000)),
+                ]);
+            }
+            fclose($media);
+
+            $finalize = $connection->post('media/upload', [
+                'command' => 'FINALIZE',
+                'media_id' => $init->media_id_string,
+            ]);
+
+            sleep(5);
+
+            $state = $connection->get('media/upload', [
                 'command' => 'STATUS',
-				'media_id' => $finalize->media_id_string,
+                'media_id' => $finalize->media_id_string,
             ]);
-			
-			if ($state->processing_info->state === 'succeeded') {
-				array_push($ids, $finalize->media_id_string);
-			}
+
+            if ($state->processing_info->state === 'succeeded') {
+                return $finalize;
+            }
         }
-		
-		if (!empty($ids)) {
-			$ids = array_slice($ids, 0, 4);
-			
-			$params['media'] = [
-				'media_ids' => $ids,
-			]; 
-		}
-		
-		$connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret,  $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
-		
-		$connection->setApiVersion('2');
-		
-		return $connection->post('tweets', $params, ['jsonPayload' => true]);
+
+        throw new TwitterOAuthException('Media upload failed');
     }
 
     /**
@@ -340,8 +347,8 @@ class X extends OAuth1 implements AtomInterface
 
         return $userActivity;
     }
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     public function buildAtomFeed($filter = null, $trulyValid = false)
@@ -667,7 +674,7 @@ class X extends OAuth1 implements AtomInterface
 
             $apiUrl = 'https://upload.twitter.com/1.1/media/upload.json';
             $parameters = [
-                'command' =>'INIT',
+                'command' => 'INIT',
                 'media_type' => $mediaType,
                 'total_bytes' => strval($totalBytes),
             ];

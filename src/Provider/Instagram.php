@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -145,7 +146,7 @@ class Instagram extends OAuth2 implements AtomInterface
 
         $this->validateApiResponse('Unable to exchange the access token');
 
-       if ($accessToken = $this->getStoredData('access_token')) {
+        if ($accessToken = $this->getStoredData('access_token')) {
             $this->apiRequestParameters['appsecret_proof'] = hash_hmac('sha256', $accessToken, $this->clientSecret);
         }
 
@@ -264,8 +265,8 @@ class Instagram extends OAuth2 implements AtomInterface
 
         return $data;
     }
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     public function buildAtomFeed($filter = null, $trulyValid = false)

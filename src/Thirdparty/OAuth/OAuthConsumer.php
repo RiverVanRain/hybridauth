@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * This file is part of the OAuth PHP Library (https://code.google.com/p/oauth/)
 *
@@ -16,7 +17,7 @@ class OAuthConsumer
 {
     public $key;
     public $secret;
-	public $callback_url;
+    public $callback_url;
 
     /**
      * OAuthConsumer constructor.

@@ -10,13 +10,12 @@ use Hybridauth\User\Profile;
 
 class TikTok extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
     protected $scope = 'user.info.basic';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected $apiBaseUrl = 'https://open.tiktokapis.com/v2/';
@@ -30,11 +29,11 @@ class TikTok extends OAuth2
      * {@inheritdoc}
      */
     protected $accessTokenUrl = 'https://open.tiktokapis.com/v2/oauth/token';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
-	protected $refreshTokenUrl = 'https://open.tiktokapis.com/v2/oauth/token';
+    protected $refreshTokenUrl = 'https://open.tiktokapis.com/v2/oauth/token';
 
     /**
      * {@inheritdoc}
@@ -78,10 +77,10 @@ class TikTok extends OAuth2
         if (!property_exists($response, 'data') || !property_exists($response->data, 'user') || !property_exists($response->data->user, 'union_id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
-        
-		$data = new Data\Collection($response->data->user);
-        
-		$userProfile = new User\Profile();
+
+        $data = new Data\Collection($response->data->user);
+
+        $userProfile = new User\Profile();
 
         $userProfile->identifier = $data->get('union_id');
         $userProfile->displayName = $data->get('display_name');

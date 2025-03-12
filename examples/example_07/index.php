@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Build a simple HTML page with multiple providers, opening provider authentication in a pop-up.
  */

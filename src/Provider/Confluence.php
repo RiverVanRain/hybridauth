@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -35,7 +36,7 @@ class Confluence extends OAuth2
      * {@inheritdoc}
      */
     protected $authorizeUrl = 'https://auth.atlassian.com/authorize?audience=api.atlassian.com&response_type=code&prompt=consent';
-	
+
     /**
      * {@inheritdoc}
      */
@@ -45,14 +46,14 @@ class Confluence extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/';
-	
+
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
         $response = $this->apiRequest('me');
-		
+
         $data = new Data\Collection($response);
 
         if (!$data->exists('account_id')) {
@@ -62,13 +63,13 @@ class Confluence extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $data->get('account_id');
-		$userProfile->data = [
-			'username' => str_replace(' ', '', $data->get('nickname')),
+        $userProfile->data = [
+            'username' => str_replace(' ', '', $data->get('nickname')),
         ];
-		$userProfile->email = $data->get('email');
+        $userProfile->email = $data->get('email');
         $userProfile->displayName = $data->get('name');
-		$userProfile->photoURL = $data->get('picture');
-		$userProfile->region = $data->get('zoneinfo');
+        $userProfile->photoURL = $data->get('picture');
+        $userProfile->region = $data->get('zoneinfo');
 
         return $userProfile;
     }

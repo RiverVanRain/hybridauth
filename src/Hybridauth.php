@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -121,7 +122,7 @@ class Hybridauth
         $adapter = isset($config['adapter']) ? $config['adapter'] : sprintf('Hybridauth\\Provider\\%s', $name);
 
         if (!class_exists($adapter)) {
-			$unexistingConfiguredAdapter = $adapter;
+            $unexistingConfiguredAdapter = $adapter;
             $adapter = null;
             $fs = new \FilesystemIterator(__DIR__ . '/Provider/');
             /** @var \SplFileInfo $file */

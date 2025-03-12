@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Details how to use users in a similar fashion to Hybridauth 2. Note that while Hybridauth 3 provides
 * a similar interface to Hybridauth 2, both versions are not fully compatible with each other.

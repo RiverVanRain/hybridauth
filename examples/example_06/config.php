@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Build a configuration array to pass to `Hybridauth\Hybridauth`
  */

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -35,8 +36,8 @@ class Trello extends OAuth1
      * {@inheritdoc}
      */
     protected $authorizeUrl = 'https://trello.com/1/OAuthAuthorizeToken';
-	
-	 /**
+
+     /**
      * {@inheritdoc}
      */
     protected $requestTokenUrl = 'https://trello.com/1/OAuthGetRequestToken';
@@ -50,15 +51,15 @@ class Trello extends OAuth1
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/';
-	
-	protected function initialize()
+
+    protected function initialize()
     {
         parent::initialize();
 
         $this->AuthorizeUrlParameters += [
             'expiration' => 'never',
-			'response_type' => 'fragment',
-			'name' => $this->config->get('name')
+            'response_type' => 'fragment',
+            'name' => $this->config->get('name')
         ];
     }
 
@@ -79,12 +80,12 @@ class Trello extends OAuth1
 
         $userProfile->identifier = $data->get('id');
         $userProfile->profileURL = 'https://trello.com/' . $data->get('username') . '/';
-		$userProfile->data = [
-			'username' => $data->get('username'),
+        $userProfile->data = [
+            'username' => $data->get('username'),
         ];
         $userProfile->displayName = $data->get('fullName') ?: $data->get('username');
-		$userProfile->description = $data->get('bio');
-		$userProfile->photoURL = $data->get('avatarUrl');
+        $userProfile->description = $data->get('bio');
+        $userProfile->photoURL = $data->get('avatarUrl');
 
         return $userProfile;
     }

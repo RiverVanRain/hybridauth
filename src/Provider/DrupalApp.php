@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Elgg OAuth Plugin [Plugin]
  * @author Nikolai Shcherbin
@@ -18,14 +19,15 @@ use Hybridauth\User;
 /**
  * Custom Drupal app OAuth2 provider adapter.
  */
-class DrupalApp extends OAuth2 {
-	
-	/**
+class DrupalApp extends OAuth2
+{
+    /**
      * {@inheritdoc}
      */
     protected $scope = 'openid profile email';
-	
-	public function getUserProfile() {
+
+    public function getUserProfile()
+    {
         $response = $this->apiRequest('oauth2/UserInfo');
 
         $data = new Data\Collection($response);
@@ -41,11 +43,10 @@ class DrupalApp extends OAuth2 {
         $userProfile->photoURL = $data->get('picture');
         $userProfile->email = $data->get('email');
         $userProfile->emailVerified = $data->get('email_verified') ? $data->get('email') : '';
-		$userProfile->data = [
-			'username' => $data->get('preferred_username'),
+        $userProfile->data = [
+            'username' => $data->get('preferred_username'),
         ];
 
         return $userProfile;
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -41,8 +42,8 @@ class GitHub extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.github.com/v3/oauth/';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected function initialize()

@@ -57,8 +57,8 @@ class QQ extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = ''; // Not available
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected $responseDataFormat = 'json';
@@ -79,7 +79,7 @@ class QQ extends OAuth2
 
         $this->apiRequestParameters = [
             'access_token' => $this->getStoredData('access_token'),
-			'fmt' => $this->responseDataFormat
+            'fmt' => $this->responseDataFormat
         ];
 
         $this->apiRequestHeaders = [];
@@ -93,7 +93,7 @@ class QQ extends OAuth2
         $collection = parent::validateAccessTokenExchange($response);
 
         $resp = $this->apiRequest($this->accessTokenInfoUrl);
-		
+
         if (!isset($resp->openid)) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }

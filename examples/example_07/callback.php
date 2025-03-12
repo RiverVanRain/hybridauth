@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A simple example that shows how to use multiple providers, opening provider authentication in a pop-up.
  */
@@ -12,7 +13,6 @@ use Hybridauth\HttpClient;
 use Hybridauth\Storage\Session;
 
 try {
-
     $hybridauth = new Hybridauth($config);
     $storage = new Session();
     $error = false;
@@ -62,7 +62,6 @@ try {
     // Event 3: Provider returns via CALLBACK
     //
     if ($provider = $storage->get('provider')) {
-
         $hybridauth->authenticate($provider);
         $storage->set('provider', null);
 
@@ -90,9 +89,7 @@ try {
                     window.opener.closeAuthWindow();
                 }
             </script>";
-
     }
-
 } catch (Exception $e) {
     error_log($e->getMessage());
     echo $e->getMessage();

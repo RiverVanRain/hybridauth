@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -51,7 +52,7 @@ class AtomFeedBuilder
                 } elseif ($atom->content !== null) {
                     $title = AtomHelper::htmlToPlainText($atom->content);
                 }
-				if ($title === null) {
+                if ($title === null) {
                     $title = '';
                 }
                 AtomHelper::limitLengthTo($title, 50);

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -138,7 +139,8 @@ class Guzzle implements HttpClientInterface
                 case 'POST':
                     $body_type = $multipart ? 'multipart' : 'form_params';
 
-                    if (isset($this->requestHeader['Content-Type'])
+                    if (
+                        isset($this->requestHeader['Content-Type'])
                         && $this->requestHeader['Content-Type'] === 'application/json'
                     ) {
                         $body_type = 'json';

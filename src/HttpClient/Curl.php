@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -130,7 +131,8 @@ class Curl implements HttpClientInterface
             case 'POST':
             case 'PATCH':
                 $body_content = $multipart ? $parameters : http_build_query($parameters);
-                if (isset($this->requestHeader['Content-Type'])
+                if (
+                    isset($this->requestHeader['Content-Type'])
                     && $this->requestHeader['Content-Type'] == 'application/json'
                 ) {
                     $body_content = json_encode($parameters);

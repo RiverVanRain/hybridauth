@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -99,7 +100,7 @@ class Foursquare extends OAuth2
      */
     public function getUserContacts()
     {
-		$response = $this->apiRequest('users/self/lists', 'GET', [
+        $response = $this->apiRequest('users/self/lists', 'GET', [
             'group' => 'friends',
         ]);
 

@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -43,8 +44,8 @@ abstract class Discourse extends AbstractAdapter implements AdapterInterface
     * @var string
     */
     protected $ssoSecret = '';
-	
-	protected $apiDocumentation = 'https://docs.discourse.org';
+
+    protected $apiDocumentation = 'https://docs.discourse.org';
 
     /**
     * {@inheritdoc}
@@ -52,7 +53,7 @@ abstract class Discourse extends AbstractAdapter implements AdapterInterface
     protected function configure()
     {
         $this->baseUrl   = $this->config->filter('endpoints')->get('api_base_url');
-		$this->ssoSecret = $this->config->filter('keys')->get('secret');
+        $this->ssoSecret = $this->config->filter('keys')->get('secret');
 
         if (!$this->baseUrl || !$this->ssoSecret) {
             throw new InvalidApplicationCredentialsException(
@@ -134,7 +135,7 @@ abstract class Discourse extends AbstractAdapter implements AdapterInterface
         $sso = filter_input(INPUT_GET, 'sso');
         $sig = filter_input(INPUT_GET, 'sig');
 
-		if ($this->signAuthenticatePayload($sso) !== $sig) {
+        if ($this->signAuthenticatePayload($sso) !== $sig) {
             throw new UnexpectedApiResponseException('Invalid response received.');
         }
 
@@ -187,7 +188,7 @@ abstract class Discourse extends AbstractAdapter implements AdapterInterface
 
         if ($this->getStoredData('authorization_nonce') != $nonce) {
             throw new InvalidAuthorizationStateException(
-                'The authorization nonce [nonce=' . substr(htmlentities($nonce), 0, 100). '] '
+                'The authorization nonce [nonce=' . substr(htmlentities($nonce), 0, 100) . '] '
                     . 'of this page is either invalid or has already been consumed.'
             );
         }

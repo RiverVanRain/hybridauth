@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hybridauth
  * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -57,7 +58,7 @@ class AutoDesk extends OAuth2
     protected function initialize()
     {
         parent::initialize();
-        
+
         if ($this->isRefreshTokenAvailable()) {
             $this->tokenRefreshParameters += [
                 'client_id'     => $this->clientId,
@@ -82,7 +83,7 @@ class AutoDesk extends OAuth2
 
         $userProfile->identifier = $collection->get('userId');
         $userProfile->displayName
-            = $collection->get('firstName') .' '. $collection->get('lastName');
+            = $collection->get('firstName') . ' ' . $collection->get('lastName');
         $userProfile->firstName = $collection->get('firstName');
         $userProfile->lastName = $collection->get('lastName');
         $userProfile->email = $collection->get('emailId');

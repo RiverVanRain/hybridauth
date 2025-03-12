@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Basic autoloader for Hybridauth library which you may use as it is or as a template
  * to suit your application's environment.

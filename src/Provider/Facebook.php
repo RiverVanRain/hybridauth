@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -152,8 +153,8 @@ class Facebook extends OAuth2 implements AtomInterface
         $this->validateApiResponse('Unable to exchange the access token');
 
         $this->validateAccessTokenExchange($response);
-		
-		if ($accessToken = $this->getStoredData('access_token')) {
+
+        if ($accessToken = $this->getStoredData('access_token')) {
             $this->apiRequestParameters['appsecret_proof'] = hash_hmac('sha256', $accessToken, $this->clientSecret);
         }
 
@@ -163,12 +164,12 @@ class Facebook extends OAuth2 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-	public function getUserProfile()
+    public function getUserProfile()
     {
         return $this->getUserProfileFromOIDCToken() ?? $this->getUserProfileFromAccessToken();
     }
-	
-	/**
+
+    /**
      * Retrieve the user data from access token.
      *
      * @return \Hybridauth\User\Profile
@@ -187,7 +188,7 @@ class Facebook extends OAuth2 implements AtomInterface
             'hometown',
             'birthday',
         ];
-        
+
         if (strpos($this->scope, 'user_link') !== false) {
             $fields[] = 'link';
         }
@@ -221,9 +222,9 @@ class Facebook extends OAuth2 implements AtomInterface
         $userProfile->language = $data->get('locale');
         $userProfile->description = $data->get('about');
         $userProfile->email = $data->get('email');
-		
-		$userProfile->data = [
-			'username' => $data->get('id'),
+
+        $userProfile->data = [
+            'username' => $data->get('id'),
         ];
 
         // Fallback for profile URL in case Facebook does not provide "pretty" link with username (if user set it).
@@ -245,8 +246,8 @@ class Facebook extends OAuth2 implements AtomInterface
 
         return $userProfile;
     }
-	
-	/**
+
+    /**
      * Get the user profile from OIDC token.
      *
      * @return \Hybridauth\User\Profile
@@ -309,7 +310,7 @@ class Facebook extends OAuth2 implements AtomInterface
         $userProfile->email = $data->get('email');
         $userProfile->firstName = $data->get('given_name');
         $userProfile->lastName = $data->get('family_name');
-        $userProfile->displayName = $userProfile->firstName.' '.$userProfile->lastName;
+        $userProfile->displayName = $userProfile->firstName . ' ' . $userProfile->lastName;
         $userProfile->photoURL = $data->get('picture');
         // Fallback for profile URL in case Facebook does not provide "pretty" link with username (if user set it).
         if (empty($userProfile->profileURL)) {
@@ -318,8 +319,8 @@ class Facebook extends OAuth2 implements AtomInterface
 
         return $userProfile;
     }
-	
-	/**
+
+    /**
      * Generate a photo URL for a user.
      *
      * @param string $identifier
@@ -372,8 +373,8 @@ class Facebook extends OAuth2 implements AtomInterface
         if ($birthday === null) {
             return $userProfile;
         }
-		
-		$result = (new Parser())->parseBirthday($birthday);
+
+        $result = (new Parser())->parseBirthday($birthday);
 
         $userProfile->birthYear = (int)$result[0];
         $userProfile->birthMonth = (int)$result[1];
@@ -469,7 +470,7 @@ class Facebook extends OAuth2 implements AtomInterface
      * Get a page access token.
      *
      * @param string $pageId Page we need to work with
-	 * @param boolean $writable Pages returned need to have write access
+     * @param boolean $writable Pages returned need to have write access
      *
      * @return array A list: Access token, extra headers for auth, extra parameters for auth
      * @throws InvalidArgumentException
@@ -587,8 +588,8 @@ class Facebook extends OAuth2 implements AtomInterface
 
         return $userActivity;
     }
-	
-	/**
+
+    /**
      * Get key ID from OIDC token.
      *
      * @param string $accessToken
@@ -625,8 +626,8 @@ class Facebook extends OAuth2 implements AtomInterface
 
         return sprintf($this->profileUrlTemplate, $identity);
     }
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     public function buildAtomFeed($filter = null, $trulyValid = false)
@@ -686,8 +687,8 @@ class Facebook extends OAuth2 implements AtomInterface
         if ($filter === null) {
             $filter = new Filter();
         }
-		
-		$category = $this->getDefaultCategory($filter);
+
+        $category = $this->getDefaultCategory($filter);
         $isPersonal = ($category->identifier == '-');
 
         $fieldsShared = [
@@ -731,8 +732,8 @@ class Facebook extends OAuth2 implements AtomInterface
             'fields' => implode(',', $fields),
             'limit' => min(100, $filter->limit),
         ];
-		
-		$tokenHeaders = [];
+
+        $tokenHeaders = [];
         $tokenParameters = [];
         if (!$isPersonal) {
             list(, $tokenHeaders, $tokenParameters) = $this->getPageAccessTokenDetails($category->identifier, false);
@@ -779,7 +780,7 @@ class Facebook extends OAuth2 implements AtomInterface
             if (!empty($data->get('paging')->next)) {
                 $queryString = parse_url($data->get('paging')->next, PHP_URL_QUERY);
                 parse_str($queryString, $params);
-				$params = $tokenParameters + $params;
+                $params = $tokenParameters + $params;
             }
         } while (($filter->deepProbe) && (!empty($dataArray)) && (!empty($data->get('paging')->next)));
 

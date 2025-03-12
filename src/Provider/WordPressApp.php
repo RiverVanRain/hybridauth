@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Elgg OAuth Plugin [Plugin]
  * @author Nikolai Shcherbin
@@ -18,9 +19,10 @@ use Hybridauth\User;
 /**
  * Custom WordPress app OAuth2 provider adapter.
  */
-class WordPressApp extends OAuth2 {
-	
-	public function getUserProfile() {
+class WordPressApp extends OAuth2
+{
+    public function getUserProfile()
+    {
         $response = $this->apiRequest('?oauth=me');
 
         $data = new Data\Collection($response);
@@ -41,5 +43,4 @@ class WordPressApp extends OAuth2 {
 
         return $userProfile;
     }
-
 }
