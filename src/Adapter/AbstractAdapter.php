@@ -84,7 +84,9 @@ abstract class AbstractAdapter implements AdapterInterface
     protected $validateApiResponseHttpCode = true;
 
     /**
-     * @var mixed : used for testing purpose to specify filter_input behaviours
+     * Used for testing purpose to specify filter_input behaviours
+     *
+     * @var FilterService
      */
     protected static $filterService;
 
@@ -406,14 +408,14 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function filterInput($type, $var_name, $filter = FILTER_DEFAULT, $options = 0)
     {
-        if (isset(self::$filterService)) {
+        if (!isset(self::$filterService)) {
             self::$filterService = new FilterService();
         }
         return self::$filterService->filterInput($type, $var_name, $filter, $options);
     }
 
     /**
-     * @param \Hybridauth\Adapter\FilterService|null $filterService
+     * @param FilterService|null $filterService
      *
      * @return void
      */
