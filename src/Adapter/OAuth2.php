@@ -319,7 +319,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $code = null;
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $code = filter_input(INPUT_POST, 'code');
+                $code = $this->filterInput(INPUT_POST, 'code');
             } else {
                 $request_uri = $_SERVER['REQUEST_URI'];
                 $query_string = parse_url($request_uri, PHP_URL_QUERY);
@@ -378,11 +378,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function authenticateCheckError()
     {
-        $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+        $error = $this->filterInput(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
 
         if (!empty($error)) {
-            $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-            $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_description = $this->filterInput(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = $this->filterInput(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
             $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
 
@@ -428,8 +428,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $state = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $code = filter_input(INPUT_POST, 'code');
-            $state = filter_input(INPUT_POST, 'state');
+            $code = $this->filterInput(INPUT_POST, 'code');
+            $state = $this->filterInput(INPUT_POST, 'state');
         } else {
             $request_uri = $_SERVER['REQUEST_URI'];
             $query_string = parse_url($request_uri, PHP_URL_QUERY);
