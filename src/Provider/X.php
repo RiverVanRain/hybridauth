@@ -224,13 +224,26 @@ class X extends OAuth1 implements AtomInterface
             }
 
             foreach ($pictures as $picture) {
-                $media = $this->uploadMedia($picture, 'image');
+                $media_type = 'image/jpeg';
+                if (isset($status['image_media_type'])) {
+                    $media_type = $status['image_media_type'];
+                    if (!is_array($media_type)) {
+                        $media_type = [$media_type];
+                    }
+                }
+
+                $media = $this->uploadMedia($picture, $media_type, 'image');
                 array_push($media_ids, $media->data->id);
             }
         }
 
         if (isset($status['video'])) {
-            $media = $this->uploadMedia($status['video'], 'video');
+            $media_type = 'video/mp4';
+            if (isset($status['video_media_type'])) {
+                $media_type = $status['video_media_type'];
+            }
+
+            $media = $this->uploadMedia($status['video'], $media_type, 'video');
             $this->waitForMediaProcessing($media->data->id);
             array_push($media_ids, $media->data->id);
         }
@@ -248,20 +261,20 @@ class X extends OAuth1 implements AtomInterface
         return $connection->post('tweets', $params, true);
     }
 
-    public function uploadMedia($filePath, $mediaType)
+    public function uploadMedia($filePath, $mediaType, $type)
     {
         $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
         $connection->setApiVersion('2');
 
-        if ($mediaType === 'image') {
+        if ($type === 'image') {
             return $connection->upload([
                 'media' => $filePath,
-                'media_type' => 'image/jpeg',
+                'media_type' => $mediaType,
             ]);
-        } elseif ($mediaType === 'video') {
+        } elseif ($type === 'video') {
             return $connection->upload([
                 'media' => $filePath,
-                'media_type' => 'video/mp4',
+                'media_type' => $mediaType,
             ]);
         }
 

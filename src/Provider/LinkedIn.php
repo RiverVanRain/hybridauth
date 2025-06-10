@@ -168,23 +168,45 @@ class LinkedIn extends OAuth2
             throw new \Exception('Set user status requires w_member_social permission!');
         }
 
-        if (is_string($status)) {
-            $status = [
-                'author' => 'urn:li:person:' . $userID,
-                'lifecycleState' => 'PUBLISHED',
-                'specificContent' => [
-                    'com.linkedin.ugc.ShareContent' => [
-                        'shareCommentary' => [
-                            'text' => $status,
-                        ],
-                        'shareMediaCategory' => 'NONE',
-                    ],
-                ],
-                'visibility' => [
-                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
-                ],
+        if (empty($status['message'])) {
+            throw new \Exception('Text is empty.');
+        }
+
+        $params = [];
+
+        // Create a Text Share
+        $params['text'] = $status['message'];
+        $params['shareMediaCategory'] = 'NONE';
+
+        // Create an Article or URL Share
+        $params['media'] = [];
+
+        if (isset($status['link'])) {
+            $params['shareMediaCategory'] = 'ARTICLE';
+            $params['media'] = [
+                'status' => 'READY',
+                'originalUrl' => $status['link'],
             ];
         }
+
+        // WIP - Create an Image or Video Share https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin#create-an-image-or-video-share
+
+        $post = [
+            'author' => 'urn:li:person:' . $userID,
+            'lifecycleState' => 'PUBLISHED',
+            'specificContent' => [
+                'com.linkedin.ugc.ShareContent' => [
+                    'shareCommentary' => [
+                        'text' => $params['text'],
+                    ],
+                    'shareMediaCategory' => $params['shareMediaCategory'],
+                    'media' => $params['media']
+                ],
+            ],
+            'visibility' => [
+                'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
+            ],
+        ];
 
         $headers = [
             'Content-Type' => 'application/json',
@@ -192,7 +214,7 @@ class LinkedIn extends OAuth2
             'X-Restli-Protocol-Version' => '2.0.0',
         ];
 
-        $response = $this->apiRequest("ugcPosts", 'POST', $status, $headers);
+        $response = $this->apiRequest("ugcPosts", 'POST', $post, $headers);
 
         return $response;
     }

@@ -87,11 +87,58 @@ class Tumblr extends OAuth1
      */
     public function setUserStatus($status)
     {
-        $status = is_string($status)
-            ? ['type' => 'text', 'body' => $status]
-            : $status;
+        $params = [];
 
-        $response = $this->apiRequest('blog/' . $this->getStoredData('primary_blog') . '/post', 'POST', $status);
+        // Create a Text post
+        if (isset($status['message'])) {
+            $params['type'] = 'text';
+            $params['body'] = $status['message'];
+        }
+
+        // Create a Link post
+        if (isset($status['link'])) {
+            $params['type'] = 'link';
+            $params['url'] = $status['link'];
+            $params['description'] = $status['message'] ?? false;
+
+            if (isset($status['picture'])) {
+                $params['thumbnail'] = $status['picture'];
+            }
+        }
+
+        // Create a Photo post
+        if (empty($status['link']) && isset($status['picture'])) {
+            $params['type'] = 'photo';
+            $params['caption'] = $status['message'] ?? false;
+
+            $pictures = $status['picture'];
+
+            if (!is_array($pictures)) {
+                $pictures = [$pictures];
+            }
+
+            $data = [];
+
+            foreach ($pictures as $picture) {
+                $base64Data = base64_encode($picture);
+                $urlEncodedData = urlencode($base64Data);
+
+                $data[] = $base64Data;
+            }
+
+            $params['data'] = $data;
+        }
+
+        // Create a Video post
+        if (isset($status['video'])) {
+            $params['type'] = 'video';
+            $params['caption'] = $status['message'] ?? false;
+
+            $base64Data = base64_encode($status['video']);
+            $params['data'] = urlencode($base64Data);
+        }
+
+        $response = $this->apiRequest('blog/' . $this->getStoredData('primary_blog') . '/post', 'POST', $params);
 
         return $response;
     }

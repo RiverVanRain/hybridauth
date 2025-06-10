@@ -88,8 +88,16 @@ class Mastodon extends OAuth2
             }
 
             foreach ($pictures as $picture) {
+                $media_type = 'image/jpeg';
+                if (isset($status['image_media_type'])) {
+                    $media_type = $status['image_media_type'];
+                    if (!is_array($media_type)) {
+                        $media_type = [$media_type];
+                    }
+                }
+
                 $images = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
-                    'file' => new \CurlFile($picture, 'image/jpg', 'filename'),
+                    'file' => new \CurlFile($picture, $media_type, 'filename'),
                 ], $headers, true);
 
                 array_push($ids, $images->id);
@@ -101,8 +109,13 @@ class Mastodon extends OAuth2
                 'Content-Type' => 'multipart/form-data',
             ];
 
+            $media_type = 'video/mp4';
+            if (isset($status['video_media_type'])) {
+                $media_type = $status['video_media_type'];
+            }
+
             $videos = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
-                'file' => new \CurlFile($status['video'], 'video/mp4', 'filename'),
+                'file' => new \CurlFile($status['video'], $media_type, 'filename'),
             ], $headers, true);
 
             sleep(5);
