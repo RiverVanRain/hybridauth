@@ -168,7 +168,7 @@ class LinkedIn extends OAuth2
             throw new \Exception('Set user status requires w_member_social permission!');
         }
 
-        if (empty($status['message'])) {
+        if (!isset($status['message'])) {
             throw new \Exception('Text is empty.');
         }
 

@@ -107,7 +107,7 @@ class Tumblr extends OAuth1
         }
 
         // Create a Photo post
-        if (empty($status['link']) && isset($status['picture'])) {
+        if (!isset($status['link']) && isset($status['picture'])) {
             $params['type'] = 'photo';
             $params['caption'] = $status['message'] ?? false;
 
