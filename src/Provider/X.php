@@ -225,13 +225,14 @@ class X extends OAuth1 implements AtomInterface
 
             foreach ($pictures as $picture) {
                 $media = $this->uploadMedia($picture, 'image');
-                array_push($media_ids, $media->media_id_string);
+                array_push($media_ids, $media->data->id);
             }
         }
 
         if (isset($status['video'])) {
-            $media = $this->uploadMedia($status['video'], 'video', $status['video_size']);
-            array_push($media_ids, $media->media_id_string);
+            $media = $this->uploadMedia($status['video'], 'video');
+            $this->waitForMediaProcessing($media->data->id);
+            array_push($media_ids, $media->data->id);
         }
 
         if (!empty($media_ids)) {
@@ -244,59 +245,67 @@ class X extends OAuth1 implements AtomInterface
         $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
         $connection->setApiVersion('2');
 
-        return $connection->post('tweets', $params, ['jsonPayload' => true]);
+        return $connection->post('tweets', $params, true);
     }
 
-    private function uploadMedia($filePath, $mediaType, $fileSize = null)
+    public function uploadMedia($filePath, $mediaType)
     {
         $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
         $connection->setApiVersion('2');
 
         if ($mediaType === 'image') {
-            $media = $connection->upload('media/upload', ['media' => base64_encode(file_get_contents($filePath))]);
+            return $connection->upload([
+                'media' => $filePath,
+                'media_type' => 'image/jpeg',
+            ]);
         } elseif ($mediaType === 'video') {
-            $init = $connection->post('media/upload', [
-                'command' => 'INIT',
-                'total_bytes' => $fileSize,
-                'expires_after_secs' => 86400,
+            return $connection->upload([
+                'media' => $filePath,
                 'media_type' => 'video/mp4',
-                'media_category' => 'tweet_video',
             ]);
-
-            if (!isset($init->media_id_string)) {
-                throw new TwitterOAuthException('Missing media_id_string');
-            }
-
-            $segmentIndex = 0;
-            $media = fopen($filePath, 'rb');
-            while (!feof($media)) {
-                $connection->post('media/upload', [
-                    'command' => 'APPEND',
-                    'media_id' => $init->media_id_string,
-                    'segment_index' => $segmentIndex++,
-                    'media_data' => base64_encode(fread($media, 2500000)),
-                ]);
-            }
-            fclose($media);
-
-            $finalize = $connection->post('media/upload', [
-                'command' => 'FINALIZE',
-                'media_id' => $init->media_id_string,
-            ]);
-
-            sleep(5);
-
-            $state = $connection->get('media/upload', [
-                'command' => 'STATUS',
-                'media_id' => $finalize->media_id_string,
-            ]);
-
-            if ($state->processing_info->state === 'succeeded') {
-                return $finalize;
-            }
         }
 
         throw new TwitterOAuthException('Media upload failed');
+    }
+
+    public function waitForMediaProcessing($mediaId)
+    {
+        if (empty($mediaId)) {
+            throw new TwitterOAuthException('Media ID is empty');
+        }
+
+        $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $this->getStoredData('access_token'), $this->getStoredData('access_token_secret'));
+        $connection->setApiVersion('2');
+
+        $status = 'pending';
+        $attempts = 0;
+        $maxAttempts = 10; // Maximum number of attempts to check the status
+
+        while ($status === 'pending' || $status === 'in_progress') {
+            $mediaStatus = $connection->mediaStatus($mediaId);
+
+            if ($mediaStatus === null) {
+                throw new TwitterOAuthException('Failed to get media status: NULL response');
+            }
+
+            if (!isset($mediaStatus->data->processing_info->state)) {
+                throw new TwitterOAuthException('Invalid media status response');
+            }
+
+            $status = $mediaStatus->data->processing_info->state;
+            if ($status === 'pending' || $status === 'in_progress') {
+                sleep($mediaStatus->data->processing_info->check_after_secs);
+            }
+
+            $attempts++;
+            if ($attempts >= $maxAttempts) {
+                throw new TwitterOAuthException('Media processing check attempts exceeded');
+            }
+        }
+
+        if ($status !== 'succeeded') {
+            throw new TwitterOAuthException('Media processing failed');
+        }
     }
 
     /**
