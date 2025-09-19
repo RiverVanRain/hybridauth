@@ -218,112 +218,112 @@ HTML
             'hash' => $this->filterInput(INPUT_GET, 'hash'),
         ];
     }
-	
-	public function setUserStatus($status)
-	{
-		$botToken = $this->botSecret;
-		
-		$user = elgg_get_logged_in_user_entity();
-		if (!$user) {
-			throw new UnexpectedApiResponseException('No logged in user.');
-		}
-		
-		$chatId = $this->getUserChatId($botToken, $user->telegram_channel);
 
-		if (!$chatId) {
-			throw new UnexpectedApiResponseException('No associated Telegram channel found for user.');
-		}
+    public function setUserStatus($status)
+    {
+        $botToken = $this->botSecret;
 
-		$media = [];
-		$filesForUpload = [];
+        $user = elgg_get_logged_in_user_entity();
+        if (!$user) {
+            throw new UnexpectedApiResponseException('No logged in user.');
+        }
 
-		if (isset($status['picture'])) {
-			$pictures = is_array($status['picture']) ? $status['picture'] : [$status['picture']];
-			foreach ($pictures as $index => $picture) {
-				$media[] = [
-					'type' => 'photo',
-					'media' => 'attach://file'.$index,
-					'caption' => ($index===0 && isset($status['message'])) ? $status['message'] : '',
-					'parse_mode' => 'HTML',
-				];
-				
-				$media_type = 'image/jpeg';
+        $chatId = $this->getUserChatId($botToken, $user->telegram_channel);
+
+        if (!$chatId) {
+            throw new UnexpectedApiResponseException('No associated Telegram channel found for user.');
+        }
+
+        $media = [];
+        $filesForUpload = [];
+
+        if (isset($status['picture'])) {
+            $pictures = is_array($status['picture']) ? $status['picture'] : [$status['picture']];
+            foreach ($pictures as $index => $picture) {
+                $media[] = [
+                    'type' => 'photo',
+                    'media' => 'attach://file' . $index,
+                    'caption' => ($index === 0 && isset($status['message'])) ? $status['message'] : '',
+                    'parse_mode' => 'HTML',
+                ];
+
+                $media_type = 'image/jpeg';
                 if (isset($status['image_media_type'])) {
                     $media_type = $status['image_media_type'];
                     if (!is_array($media_type)) {
                         $media_type = [$media_type];
                     }
                 }
-				$filesForUpload['file'.$index] = new \CurlFile($picture, $media_type, basename($picture));
-			}
-		}
+                $filesForUpload['file' . $index] = new \CurlFile($picture, $media_type, basename($picture));
+            }
+        }
 
-		if (isset($status['video'])) {
-			$videoIndex = count($media);
-			$media[] = [
-				'type' => 'video',
-				'media' => 'attach://file'.$videoIndex,
-				'caption' => empty($media) && isset($status['message']) ? $status['message'] : '',
-				'parse_mode' => 'HTML',
-			];
-			
-			$media_type = 'video/mp4';
+        if (isset($status['video'])) {
+            $videoIndex = count($media);
+            $media[] = [
+                'type' => 'video',
+                'media' => 'attach://file' . $videoIndex,
+                'caption' => empty($media) && isset($status['message']) ? $status['message'] : '',
+                'parse_mode' => 'HTML',
+            ];
+
+            $media_type = 'video/mp4';
             if (isset($status['video_media_type'])) {
                 $media_type = $status['video_media_type'];
             }
-			$filesForUpload['file'.$videoIndex] = new \CurlFile($status['video'], $media_type, basename($status['video']));
-		}
+            $filesForUpload['file' . $videoIndex] = new \CurlFile($status['video'], $media_type, basename($status['video']));
+        }
 
-		if (!empty($media)) {
-			$postData = array_merge([
-				'chat_id' => $chatId,
-				'media' => json_encode($media),
-			], $filesForUpload);
+        if (!empty($media)) {
+            $postData = array_merge([
+                'chat_id' => $chatId,
+                'media' => json_encode($media),
+            ], $filesForUpload);
 
-			$url = "https://api.telegram.org/bot{$botToken}/sendMediaGroup";
-			return $this->apiRequestTelegram($url, $postData);
-		}
+            $url = "https://api.telegram.org/bot{$botToken}/sendMediaGroup";
+            return $this->apiRequestTelegram($url, $postData);
+        }
 
-		if (isset($status['message'])) {
-			$data = [
-				'chat_id' => $chatId,
-				'text' => $status['message'],
-				'parse_mode' => 'HTML',
-			];
-			$url = "https://api.telegram.org/bot{$botToken}/sendMessage";
-			return $this->apiRequestTelegram($url, json_encode($data), true);
-		}
+        if (isset($status['message'])) {
+            $data = [
+                'chat_id' => $chatId,
+                'text' => $status['message'],
+                'parse_mode' => 'HTML',
+            ];
+            $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+            return $this->apiRequestTelegram($url, json_encode($data), true);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	protected function apiRequestTelegram($url, $data, $isJson = false)
-	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		if ($isJson) {
-			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		} else {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		}
-		$response = curl_exec($ch);
-		curl_close($ch);
-		return json_decode($response, true);
-	}
-	
-	protected function getUserChatId($botToken, $telegram_channel)
-	{
-		$url = "https://api.telegram.org/bot{$botToken}/getChat?chat_id=" . urlencode($telegram_channel);
+    protected function apiRequestTelegram($url, $data, $isJson = false)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if ($isJson) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($response, true);
+    }
 
-		$response = file_get_contents($url);
-		$data = json_decode($response, true);
+    protected function getUserChatId($botToken, $telegram_channel)
+    {
+        $url = "https://api.telegram.org/bot{$botToken}/getChat?chat_id=" . urlencode($telegram_channel);
 
-		if ($data['ok']) {
-			return $data['result']['id'];
-		}
+        $response = file_get_contents($url);
+        $data = json_decode($response, true);
 
-		return null;
-	}
+        if ($data['ok']) {
+            return $data['result']['id'];
+        }
+
+        return null;
+    }
 }
