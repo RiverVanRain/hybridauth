@@ -187,7 +187,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserActivity($stream)
+    public function getUserActivity(string $stream, array $params = [])
     {
         throw new NotImplementedException('Provider does not support this feature.');
     }
@@ -195,7 +195,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setUserStatus($status)
+    public function setUserStatus(string|array $status)
     {
         throw new NotImplementedException('Provider does not support this feature.');
     }

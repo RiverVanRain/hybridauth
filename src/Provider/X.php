@@ -54,7 +54,7 @@ class X extends OAuth1 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    protected $scope = ['users.read', 'tweet.read', 'tweet.write', 'offline.access', 'media.write'];
+    protected $scope = 'users.read users.email tweet.read tweet.write offline.access media.write';
 
     /**
      * {@inheritdoc}
@@ -140,7 +140,7 @@ class X extends OAuth1 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserContacts($parameters = [])
+    public function getUserContacts(array $parameters = [])
     {
         $parameters = ['cursor' => '-1'] + $parameters;
 
@@ -324,13 +324,43 @@ class X extends OAuth1 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserActivity($stream = 'me')
+    public function getUserActivity(string $username, array $params = [])
     {
-        $apiUrl = ($stream == 'me')
-            ? 'statuses/user_timeline.json'
-            : 'statuses/home_timeline.json';
+        if (!$username) {
+            return [];
+        }
 
-        $response = $this->apiRequest($apiUrl);
+        $response = $this->apiRequest("users/by/username/{$username}");
+
+        $data = new Collection($response);
+
+        if (!$data->exists('data') || !$data->get('data')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response. No data.');
+        }
+
+        $userData = $data->get('data');
+        $userData = new Collection($userData);
+
+        if (!$userData->exists('id')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response. No userData.');
+        }
+
+        $userId = $userData->get('id');
+
+        $maxResults = $params['max_results'] ?? 5;
+
+        if ((int) $maxResults < 5 || (int) $maxResults > 100) {
+            $maxResults = 5;
+        }
+
+        $excludeParams = '';
+        $exclude = $params['exclude'] ?? 'replies,retweets';
+
+        if (!empty($exclude) && is_string($exclude)) {
+            $excludeParams = "&exclude={$exclude}";
+        }
+
+        $response = $this->apiRequest("users/{$userId}/tweets?max_results={$maxResults}{$excludeParams}");
 
         if (!$response) {
             return [];

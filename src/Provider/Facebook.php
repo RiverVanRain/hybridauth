@@ -530,7 +530,7 @@ class Facebook extends OAuth2 implements AtomInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserActivity($stream = 'me')
+    public function getUserActivity(string $stream = 'me', array $params = [])
     {
         $apiUrl = $stream == 'me' ? 'me/feed' : 'me/home';
 

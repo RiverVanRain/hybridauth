@@ -442,6 +442,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             }
         }
 
+        $this->logger->debug('Authorization State: ' . $this->getStoredData('authorization_state'));
+
         /**
          * Authorization Request State
          *
@@ -513,6 +515,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             if (!isset($this->AuthorizeUrlParameters['state'])) {
                 $this->AuthorizeUrlParameters['state'] = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
             }
+
+            $this->logger->debug('Get Authorization State from AuthorizeUrlParameters: ' . $this->AuthorizeUrlParameters['state']);
 
             $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
         }

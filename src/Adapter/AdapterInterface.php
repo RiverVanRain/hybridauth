@@ -61,10 +61,11 @@ interface AdapterInterface
      * Retrieve the user activity stream
      *
      * @param string $stream
+     * @param array  $params
      *
      * @return \Hybridauth\User\Activity[]
      */
-    public function getUserActivity($stream);
+    public function getUserActivity(string $stream, array $params = []);
 
     /**
      * Post a status on user wall|timeline|blog|website|etc.
@@ -73,7 +74,7 @@ interface AdapterInterface
      *
      * @return mixed API response
      */
-    public function setUserStatus($status);
+    public function setUserStatus(string|array $status);
 
     /**
      * Post a status on page|company|group wall.

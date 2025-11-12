@@ -37,6 +37,7 @@ trait DataStoreTrait
         }
 
         $this->getStorage()->set($this->providerId . '.' . $name, $value);
+        $this->logger->debug("STORE DATA: " . $this->providerId . '.' . $name . " = " . print_r($value, true));
     }
 
     /**
@@ -52,7 +53,9 @@ trait DataStoreTrait
      */
     protected function getStoredData($name)
     {
-        return $this->getStorage()->get($this->providerId . '.' . $name);
+        $value = $this->getStorage()->get($this->providerId . '.' . $name);
+        $this->logger->debug("GET STORE DATA: " . $this->providerId . '.' . $name . " = " . print_r($value, true));
+        return $value;
     }
 
     /**
