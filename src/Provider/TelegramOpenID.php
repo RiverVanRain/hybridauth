@@ -64,7 +64,7 @@ class TelegramOpenID extends AbstractAdapter
     protected $clientSecret = '';
 
     /** @var string */
-    protected $scope = 'openid profile';
+    protected $scope = 'openid profile phone';
 
     /** @var string */
     protected $apiDocumentation = 'https://core.telegram.org/bots/telegram-login';

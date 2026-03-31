@@ -211,9 +211,7 @@ class Apple extends OAuth2
 
                     $pem = (string)$key;
 
-                    $payload = (version_compare($this->getJwtVersion(), '6.2') < 0) ?
-                        JWT::decode($id_token, $pem, ['RS256']) :
-                        JWT::decode($id_token, new Key($pem, 'RS256'));
+                    $payload = JWT::decode($id_token, new Key($pem, 'RS256'));
                     break;
                 } catch (Exception $e) {
                     $error = $e->getMessage();
