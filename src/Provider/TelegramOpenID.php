@@ -147,7 +147,7 @@ class TelegramOpenID extends AbstractAdapter
         }
 
         $description = $this->filterInput(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-        $uri         = $this->filterInput(INPUT_GET, 'error_uri',         FILTER_SANITIZE_SPECIAL_CHARS);
+        $uri         = $this->filterInput(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
         $message = sprintf(
             'Telegram returned an error: %s %s %s',
@@ -175,9 +175,9 @@ class TelegramOpenID extends AbstractAdapter
         $state         = bin2hex($this->secureRandomBytes(16));
         $nonce         = bin2hex($this->secureRandomBytes(16));
 
-        $this->storeData('pkce_code_verifier',  $codeVerifier);
+        $this->storeData('pkce_code_verifier', $codeVerifier);
         $this->storeData('authorization_state', $state);
-        $this->storeData('oidc_nonce',          $nonce);
+        $this->storeData('oidc_nonce', $nonce);
 
         $params = array(
             'client_id'             => $this->clientId,
@@ -265,8 +265,8 @@ class TelegramOpenID extends AbstractAdapter
         $claims  = $this->validateIdToken($idToken, $nonce !== '' ? $nonce : null);
 
         $this->storeData('access_token', $tokenData->get('access_token'));
-        $this->storeData('token_type',   $tokenData->get('token_type'));
-        $this->storeData('id_token',     $idToken);
+        $this->storeData('token_type', $tokenData->get('token_type'));
+        $this->storeData('id_token', $idToken);
 
         if ($tokenData->exists('expires_in')) {
             $this->storeData('expires_in', $tokenData->get('expires_in'));
@@ -461,7 +461,7 @@ class TelegramOpenID extends AbstractAdapter
         $payloadB64   = $parts[1];
         $signatureB64 = $parts[2];
 
-        $header  = json_decode($this->base64UrlDecode($headerB64),  true);
+        $header  = json_decode($this->base64UrlDecode($headerB64), true);
         $payload = json_decode($this->base64UrlDecode($payloadB64), true);
 
         if (! is_array($header) || ! is_array($payload)) {
