@@ -41,6 +41,37 @@ class Mastodon extends OAuth2
     }
 
     /**
+     * Exchange the authorization code for an access token.
+     *
+     * The parent implementation (OAuth2::authenticateFinish) adds an
+     * "Authorization: Basic ..." header built from the client credentials right before
+     * calling this method, while the same client_id/client_secret are still present in
+     * $tokenExchangeParameters.
+     *
+     * Mastodon (Doorkeeper) enforces RFC 6749 section 2.3: "The client MUST NOT use more
+     * than one authentication method in each request" and rejects the request with
+     *
+     *   HTTP 400 {"error":"invalid_request","error_description":"The request utilizes more
+     *             than one mechanism for authenticating the client."}
+     *
+     * Dropping the header leaves a single authentication mechanism. Mastodon documents
+     * client_id/client_secret as form data parameters of POST /oauth/token
+     * (client_secret_post) and advertises both client_secret_basic and client_secret_post
+     * in /.well-known/oauth-authorization-server.
+     *
+     * See https://docs.joinmastodon.org/methods/oauth/#token
+     *
+     * @param string $code Authorization code
+     * @return string Raw Provider API response
+     */
+    protected function exchangeCodeForAccessToken($code)
+    {
+        unset($this->tokenExchangeHeaders['Authorization']);
+
+        return parent::exchangeCodeForAccessToken($code);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getUserProfile()
